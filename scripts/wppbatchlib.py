@@ -62,7 +62,7 @@ class apiThread(threading.Thread):
 					while i < 3:
 						i += 1
 						try:
-							response = urllib2.urlopen(apiURL, timeout = 5).read().replace('\n','')
+							response = urllib2.urlopen(apiURL, timeout = 5).read().encode('utf-8').replace('\n','')
 							self.csvWriter.writerow(inputRow+[response])
 							break
 						except HTTPError, e:

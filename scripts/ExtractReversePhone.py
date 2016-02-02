@@ -197,7 +197,6 @@ try:
 	print 'All done!'
 	print 'You can find your results file here: '+str(resultsFilePath)
 	print ''
-	var = raw_input("Hit enter to quit")
 	
 except:
 	print 'An unknown error occurred: '+str(sys.exc_info()[0])
