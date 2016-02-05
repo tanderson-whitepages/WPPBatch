@@ -89,7 +89,7 @@ try:
 			print 'How many threads would you like to run?'
 		var = raw_input(">")
 		if var != '':
-			numThreads = var
+			numThreads = int(var)
 		print 'Using threads = '+str(numThreads)
 		print ''
 		
@@ -139,7 +139,7 @@ try:
 			var = raw_input('>')
 			if var != '':
 				inputMap.append([i,int(var)])
-				print 'Submitting "'+headerRow[j]+'" values for input parameter "'+i+'"'
+				print 'Submitting "'+headerRow[int(var)]+'" values for input parameter "'+i+'"'
 			else:
 				print 'Ignoring input parameter "'+i+'"'
 		

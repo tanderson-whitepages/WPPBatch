@@ -79,7 +79,7 @@ try:
 			print 'How many threads would you like to run?'
 		var = raw_input(">")
 		if var != '':
-			numThreads = var
+			numThreads = int(var)
 		print 'Using threads = '+str(numThreads)
 		print ''
 		

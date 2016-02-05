@@ -65,7 +65,8 @@ try:
 			error = wppbatchlib.nvl(data.get('error',{}),{}).get('message','')
 			results = wppbatchlib.nvl(data.get('results',[{}]),[{}])
 						
-			if len(results[0].keys()) == 0:
+								
+			if error == '' and len(results[0].keys()) == 0:
 				error = 'No results found'
 			
 			resultNum = 0
