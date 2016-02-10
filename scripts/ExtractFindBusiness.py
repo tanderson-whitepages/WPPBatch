@@ -1,4 +1,5 @@
 import sys, csv, json, wppbatchlib
+csv.field_size_limit(min(2147483647,sys.maxsize))
 
 VERSION = '0.1'
 AUTHOR = 'Trevor Anderson <tanderson@whitepages.com>'
