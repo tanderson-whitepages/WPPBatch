@@ -21,6 +21,7 @@ try:
 	csvWriter = csv.writer(open(resultsFilePath,'wb'),delimiter=',',quotechar='"')
 
 	headerRow = []
+	headerRow.append("Error")
 	headerRow.append("Billing Name Warning")
 	headerRow.append("Billing Name Matches Celebrity")
 	headerRow.append("Billing Name Is Garbled")
@@ -94,6 +95,7 @@ try:
 				continue
 			
 			resultRow = []
+			resultRow.append('')
 			resultRow.append(wppbatchlib.nvl(wppbatchlib.nvl(data.get('billing_name_checks',{}),{}).get('warnings',['']),[''])[0])
 			resultRow.append(wppbatchlib.nvl(wppbatchlib.nvl(data.get('billing_name_checks',{}),{}).get('celebrity_name',''),''))
 			resultRow.append(wppbatchlib.nvl(wppbatchlib.nvl(data.get('billing_name_checks',{}),{}).get('fake_name',''),''))
