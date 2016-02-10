@@ -58,6 +58,5 @@ try:
 	print 'All done!'
 	print 'You can find your results file here: '+str(resultsFilePath)
 	print ''
-	quit()
 except:
 	print 'An unknown error occurred: '+str(sys.exc_info()[0])

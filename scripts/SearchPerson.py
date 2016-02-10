@@ -225,7 +225,5 @@ try:
 	
 	outFile.flush()
 	outFile.close()
-	var = raw_input("Hit enter to quit")
 except:
 	print 'An unexpected error occurred running inputs: '+str(sys.exc_info()[0])
-	var = raw_input("Hit enter to quit")
