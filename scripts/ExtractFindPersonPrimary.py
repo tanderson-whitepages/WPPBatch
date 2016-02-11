@@ -116,7 +116,7 @@ for row in csvReader:
 					gender = person.get('gender','')
 					
 					phoneNumber = ''
-					phones = wppbatchlib.nvl(person.get('phones',[{}]),[{}])
+					phones = wppbatchlib.nvl(primaryPerson.get('phones',[{}]),[{}])
 					if phones is not None:
 						for p in phones:
 							phoneNumber = p.get('phone_number','')
