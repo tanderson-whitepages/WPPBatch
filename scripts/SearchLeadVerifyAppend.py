@@ -85,24 +85,15 @@ try:
 		
 		#now iterate over input parameters for phone searches and map which column from the input file should be submitted.
 		inputFields = []
-		inputFields.append('billing.address.country_code')
-		inputFields.append('billing.name')
-		inputFields.append('billing.firstname')
-		inputFields.append('billing.lastname')
-		inputFields.append('billing.address.street_line_1')
-		inputFields.append('billing.address.city')
-		inputFields.append('billing.address.state_code')
-		inputFields.append('billing.address.postal_code')
-		inputFields.append('billing.phone')
-		inputFields.append('shipping.address.country_code')
-		inputFields.append('shipping.name')
-		inputFields.append('shipping.firstname')
-		inputFields.append('shipping.lastname')
-		inputFields.append('shipping.address.street_line_1')
-		inputFields.append('shipping.address.city')
-		inputFields.append('shipping.address.state_code')
-		inputFields.append('shipping.address.postal_code')
-		inputFields.append('shipping.phone')
+		inputFields.append('address.country_code')
+		inputFields.append('name')
+		inputFields.append('firstname')
+		inputFields.append('lastname')
+		inputFields.append('address.street_line_1')
+		inputFields.append('address.city')
+		inputFields.append('address.state_code')
+		inputFields.append('address.postal_code')
+		inputFields.append('phone')
 		inputFields.append('email_address')
 		inputFields.append('ip_address')
 		inputMap = []
@@ -172,7 +163,7 @@ try:
 		if row != 'thisistheend':
 			numInputs += 1
 			#build URL
-			apiURL = 'http://proapi.whitepages.com/3.0/identity_check.json?'
+			apiURL = 'http://proapi.whitepages.com/3.1/lead_verify_append?'
 			for i in inputMap:
 				if len(row[int(i[1])]) > 0:
 					apiURL += str(i[0]).lower()+'='+str(urllib.quote(row[int(i[1])]))+'&'

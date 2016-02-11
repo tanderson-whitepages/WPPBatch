@@ -18,7 +18,7 @@ try:
 	resultsFilePath = sys.argv[1][:-15]+'_results.csv'
 	print 'Extracting Find Person results from '+str(iFilePath)
 
-	csvReader = csv.reader(open(iFilePath,'rb'), delimiter=',', quotechar = '"')
+	csvReader = csv.reader(open(iFilePath,'rbU'), delimiter=',', quotechar = '"')
 	csvWriter = csv.writer(open(resultsFilePath,'wb'),delimiter=',',quotechar='"')
 
 	rowNum = 0
@@ -120,6 +120,9 @@ try:
 						
 						phoneNumber = ''
 						phones = wppbatchlib.nvl(person.get('phones',[{}]),[{}])
+						#get phones from top level results if this is the primary
+						if personKey == primaryPersonKey:
+							phones = wppbatchlib.nvl(primaryPerson.get('phones',[{}]),[{}])
 						if phones is not None:
 							for p in phones:
 								phoneNumber = p.get('phone_number','')

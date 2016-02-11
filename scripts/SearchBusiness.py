@@ -35,7 +35,7 @@ try:
 	rawResultsFilePath = sys.argv[1][:-4]+'_rawresults.csv'
 	iFileReader = None
 	try:
-		iFile = open(iFilePath,'rb')
+		iFile = open(iFilePath,'rbU')
 		iFileReader = csv.reader(iFile, delimiter=',', quotechar = '"')
 		headerRow = next(iFileReader)
 	except:

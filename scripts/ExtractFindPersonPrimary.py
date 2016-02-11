@@ -18,7 +18,7 @@ iFilePath = sys.argv[1]
 resultsFilePath = sys.argv[1][:-15]+'_results.csv'
 print 'Extracting Find Person results from '+str(iFilePath)
 
-csvReader = csv.reader(open(iFilePath,'rb'), delimiter=',', quotechar = '"')
+csvReader = csv.reader(open(iFilePath,'rbU'), delimiter=',', quotechar = '"')
 csvWriter = csv.writer(open(resultsFilePath,'wb'),delimiter=',',quotechar='"')
 
 rowNum = 0

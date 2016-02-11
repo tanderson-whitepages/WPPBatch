@@ -35,7 +35,7 @@ try:
 	rawResultsFilePath = sys.argv[1][:-4]+'_rawresults.csv'
 	iFileReader = None
 	try:
-		iFile = open(iFilePath,'rb')
+		iFile = open(iFilePath,'rbU')
 		iFileReader = csv.reader(iFile, delimiter=',', quotechar = '"')
 		headerRow = next(iFileReader)
 	except:
@@ -99,7 +99,7 @@ try:
 			var = raw_input('>')
 			if var != '':
 				inputMap.append([i,int(var)])
-				print 'Submitting "'+headerRow[j]+'" values for input parameter "'+i+'"'
+				print 'Submitting "'+headerRow[int(var)]+'" values for input parameter "'+i+'"'
 			else:
 				print 'Ignoring input parameter "'+i+'"'
 		
@@ -138,7 +138,8 @@ try:
 	numInputs = 0
 	doneWithFile = False
 	while not doneWithFile:
-		row = next(iFileReader, 'thisistheend')
+		iRow = next(iFileReader, 'thisistheend')
+		row = [x.decode('utf8') for x in iRow]
 		if row != 'thisistheend':
 			numInputs += 1
 			#build URL
