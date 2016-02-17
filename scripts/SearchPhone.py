@@ -132,14 +132,12 @@ try:
 	###################################################################################################
 	#	BUILD INPUT LIST
 	###################################################################################################
-
 	testInputs = wppbatchlib.inputData()
 
 	numInputs = 0
 	doneWithFile = False
 	while not doneWithFile:
-		iRow = next(iFileReader, 'thisistheend')
-		row = [x.decode('utf8') for x in iRow]
+		row = next(iFileReader, 'thisistheend')
 		if row != 'thisistheend':
 			numInputs += 1
 			#build URL
