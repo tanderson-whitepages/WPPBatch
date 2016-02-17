@@ -143,7 +143,20 @@ for row in csvReader:
 				resultRow.append(longitude)
 				resultRow.append(phoneNumber)
 				
-				csvWriter.writerow(row[:-2]+resultRow)
+				decodedRow = []
+				for a in resultRow:
+					try:
+						decodedRow.append(a.encode('utf-8'))
+					except:
+						try:
+							decodedRow.append(str(a))
+						except:
+							decodedRow.append(a)
+					
+				try:
+					csvWriter.writerow(row[:-2]+decodedRow)
+				except:
+					csvWriter.writerow(row[:-2]+['Failed to parse API results'])
 
 print 'All done!'
 print 'You can find your results file here: '+str(resultsFilePath)
