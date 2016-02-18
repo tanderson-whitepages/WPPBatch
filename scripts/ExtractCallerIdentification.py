@@ -96,7 +96,7 @@ for row in csvReader:
 			repDetails += str(x.get('score',''))
 		
 		belongsTo = wppbatchlib.nvl(results.get('belongs_to',[{}]),[{}])[0]
-		location = wppbatchlib.nvl(results.get('best_location',{}),{})
+		location = wppbatchlib.nvl(results.get('associated_locations',[{}]),[{}])[0]
 		
 		personName = wppbatchlib.nvl(belongsTo.get('names',[{}]),[{}])[0]
 		firstName = personName.get('first_name','')
@@ -175,6 +175,8 @@ for row in csvReader:
 		
 		decodedRow = []
 		for a in resultRow:
+			if a is None:
+				a = ''
 			try:
 				decodedRow.append(a.encode('utf-8'))
 			except:

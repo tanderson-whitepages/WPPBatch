@@ -118,6 +118,8 @@ for row in csvReader:
 				
 				decodedRow = []
 				for a in resultRow:
+					if a is None:
+						a = ''
 					try:
 						decodedRow.append(a.encode('utf-8'))
 					except:

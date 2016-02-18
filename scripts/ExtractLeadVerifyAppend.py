@@ -123,6 +123,8 @@ for row in csvReader:
 		resultRow.append(wppbatchlib.nvl(wppbatchlib.nvl(data.get('ip_address_checks',{}),{}).get('is_proxy',''),''))
 		decodedRow = []
 		for a in resultRow:
+			if a is None:
+				a = ''
 			try:
 				decodedRow.append(a.encode('utf-8'))
 			except:

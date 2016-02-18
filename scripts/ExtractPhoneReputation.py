@@ -57,6 +57,8 @@ for row in csvReader:
 		resultRow = [error,repLevel,repDetails,repReport,repVolume]
 		decodedRow = []
 		for a in resultRow:
+			if a is None:
+				a = ''
 			try:
 				decodedRow.append(a.encode('utf-8'))
 			except:
