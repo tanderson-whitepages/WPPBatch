@@ -9,9 +9,8 @@ iFilePath = None
 resultsFilePath = None
 
 if sys.argv == None or len(sys.argv) != 2 or len(sys.argv[1]) < 5 or sys.argv[1][-14:] != 'rawresults.csv':
-		print 'Drop a CSV file containing raw JSON results onto this program to use it.'
-		print '(you need to run SearchAddress.bat first)'
-	var = raw_input("Hit enter to quit")
+	print 'Drop a CSV file containing raw JSON results onto this program to use it.'
+	print '(you need to run SearchAddress.bat first)'
 	quit()
 
 iFilePath = sys.argv[1]
