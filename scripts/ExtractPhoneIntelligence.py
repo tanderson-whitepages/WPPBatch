@@ -57,7 +57,7 @@ for row in csvReader:
 		isConnected = results.get('is_connected','')
 		isPrepaid = results.get('is_prepaid','')
 		dncRegistered = results.get('do_not_call','')
-		rep = results.get('reputation',{})
+		rep = wppbatchlib.nvl(results.get('reputation',{}),{})
 		repLevel = rep.get('level','')
 		repVolume = rep.get('volume_score',0)
 		repReport = rep.get('report_count',0)

@@ -38,7 +38,7 @@ for row in csvReader:
 		
 		error = wppbatchlib.nvl(data.get('error',{}),{}).get('message','')
 		results = wppbatchlib.nvl(data.get('results',[{}]),[{}])[0]
-		rep = results.get('reputation',{})
+		rep = wppbatchlib.nvl(results.get('reputation',{}),{})
 		repLevel = rep.get('level','')
 		repVolume = rep.get('volume_score',0)
 		repReport = rep.get('report_count',0)
