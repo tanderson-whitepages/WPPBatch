@@ -163,7 +163,7 @@ try:
 		if row != 'thisistheend':
 			numInputs += 1
 			#build URL
-			apiURL = 'http://identity-check0.stg.pages:8910/3.1/lead_verify_append?'
+			apiURL = 'http://proapi.whitepages.com/3.1/lead_verify_append?'
 			for i in inputMap:
 				if len(row[int(i[1])]) > 0:
 					apiURL += str(i[0]).lower()+'='+str(urllib.quote(row[int(i[1])]))+'&'
