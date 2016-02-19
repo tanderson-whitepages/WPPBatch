@@ -72,7 +72,7 @@ class apiThread(threading.Thread):
 						except:
 							print 'Encountered an error loading URL "'+apiURL+'": '+str(sys.exc_info())
 					if i == 3:
-						self.csvWriter.writerow(inputRow+[''])
+						self.csvWriter.writerow(inputRow+['Failed to load the URL'])
 		except:
 			print 'Thread #'+str(self.threadID)+' encountered an error: '+str(sys.exc_info())
 
