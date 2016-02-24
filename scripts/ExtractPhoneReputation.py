@@ -40,8 +40,8 @@ for row in csvReader:
 		results = wppbatchlib.nvl(data.get('results',[{}]),[{}])[0]
 		rep = wppbatchlib.nvl(results.get('reputation',{}),{})
 		repLevel = rep.get('level','')
-		repVolume = rep.get('volume_score',0)
-		repReport = rep.get('report_count',0)
+		repVolume = rep.get('volume_score','')
+		repReport = rep.get('report_count','')
 		repDetails = ''
 		numDetails = 0
 		for x in rep.get('details',[]):

@@ -80,8 +80,8 @@ for row in csvReader:
 		dncRegistered = results.get('do_not_call','')
 		rep = wppbatchlib.nvl(results.get('reputation',{}),{})
 		repLevel = rep.get('level','')
-		repVolume = rep.get('volume_score',0)
-		repReport = rep.get('report_count',0)
+		repVolume = rep.get('volume_score','')
+		repReport = rep.get('report_count','')
 		repDetails = ''
 		numDetails = 0
 		
