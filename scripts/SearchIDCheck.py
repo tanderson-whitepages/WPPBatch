@@ -174,8 +174,9 @@ try:
 			#build URL
 			apiURL = 'http://proapi.whitepages.com/3.0/identity_check.json?'
 			for i in inputMap:
-				if len(row[int(i[1])]) > 0:
-					apiURL += str(i[0]).lower()+'='+str(urllib.quote(row[int(i[1])]))+'&'
+				if len(row) > int(i[1]):
+					if len(row[int(i[1])]) > 0:
+						apiURL += str(i[0]).lower()+'='+str(urllib.quote(row[int(i[1])]))+'&'
 			apiURL += 'api_key='+apiKey
 			#add to testInputs
 			testInputs.addInput(row,apiURL)

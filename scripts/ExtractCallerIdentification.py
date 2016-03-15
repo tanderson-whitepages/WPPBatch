@@ -45,6 +45,7 @@ for row in csvReader:
 		headers.append('Age Range')
 		headers.append('Gender')
 		headers.append('Business Name')
+		headers.append('UUID')
 		headers.append('Location Type')
 		headers.append('Location Valid From')
 		headers.append('Location Valid To')
@@ -80,8 +81,8 @@ for row in csvReader:
 		dncRegistered = results.get('do_not_call','')
 		rep = wppbatchlib.nvl(results.get('reputation',{}),{})
 		repLevel = rep.get('level','')
-		repVolume = rep.get('volume_score','')
-		repReport = rep.get('report_count','')
+		repVolume = rep.get('volume_score',0)
+		repReport = rep.get('report_count',0)
 		repDetails = ''
 		numDetails = 0
 		
@@ -95,9 +96,22 @@ for row in csvReader:
 			repDetails += ';'
 			repDetails += str(x.get('score',''))
 		
+		#choose the owner who has an address, if any
 		belongsTo = wppbatchlib.nvl(results.get('belongs_to',[{}]),[{}])[0]
+		for owner in wppbatchlib.nvl(results.get('belongs_to',[{}]),[{}])[1:]:
+			if owner is not None:
+				if owner.get('id',{}).get('type') == 'Business' and 'Ephemeral' not in wppbatchlib.nvl(owner.get('id',{}),{}).get('uuid',''):
+					belongsTo = owner
+					break
+				if owner.get('locations',[]) is not None:
+					if len(owner.get('locations',[])) > 0:
+						for l in owner.get('locations',[]):
+							if l.get('is_historical','') == False:
+								belongsTo = owner
+								break
 		location = wppbatchlib.nvl(results.get('associated_locations',[{}]),[{}])[0]
 		
+		UUID = wppbatchlib.nvl(belongsTo.get('id',{}),{}).get('uuid','')
 		personName = wppbatchlib.nvl(belongsTo.get('names',[{}]),[{}])[0]
 		firstName = personName.get('first_name','')
 		middleName = personName.get('middle_name','')
@@ -157,6 +171,7 @@ for row in csvReader:
 		resultRow.append(ageRange)
 		resultRow.append(gender)
 		resultRow.append(bizName)
+		resultRow.append(UUID)
 		resultRow.append(locType)
 		resultRow.append(validFrom)
 		resultRow.append(validTo)
