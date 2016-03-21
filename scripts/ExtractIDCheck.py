@@ -20,7 +20,7 @@ try:
 	csvReader = csv.reader(open(iFilePath,'rb'), delimiter=',', quotechar = '"')
 	csvWriter = csv.writer(open(resultsFilePath,'wb'),delimiter=',',quotechar='"')
 except:
-	print 'dudewtf'
+	print 'Error opening files'
 	
 headerRow = []
 headerRow.append("Error")
