@@ -125,7 +125,7 @@ for row in csvReader:
 		resultRow.append(wppbatchlib.nvl(wppbatchlib.nvl(data.get('address_checks',{}),{}).get('is_commercial',''),''))
 		resultRow.append(wppbatchlib.nvl(wppbatchlib.nvl(data.get('email_address_checks',{}),{}).get('email_contact_score',''),''))
 		resultRow.append(wppbatchlib.nvl(wppbatchlib.nvl(data.get('email_address_checks',{}),{}).get('warnings',['']),[''])[0])
-		resultRow.append(wppbatchlib.nvl(wppbatchlib.nvl(data.get('email_address_checks',{}),{}).get('error',''),''))
+		resultRow.append(wppbatchlib.nvl(wppbatchlib.nvl(data.get('email_address_checks',{}),{}).get('error',{}),{}).get('message'))
 		resultRow.append(wppbatchlib.nvl(wppbatchlib.nvl(data.get('email_address_checks',{}),{}).get('is_valid',''),''))
 		resultRow.append(wppbatchlib.nvl(wppbatchlib.nvl(data.get('email_address_checks',{}),{}).get('diagnostics',['']),[''])[0])
 		resultRow.append(wppbatchlib.nvl(wppbatchlib.nvl(data.get('email_address_checks',{}),{}).get('is_disposable',''),''))
