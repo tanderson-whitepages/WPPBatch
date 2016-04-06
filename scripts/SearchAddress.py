@@ -1,4 +1,4 @@
-import sys, re, csv, urllib, wppbatchlib, os
+import sys, re, csv, urllib, wppbatchlib, os, codecs
 
 ###################################################################################################
 #  SEARCH ADDRESS
@@ -36,9 +36,10 @@ try:
 	iFilePath = sys.argv[1]
 	rawResultsFilePath = sys.argv[1][:-4]+'_rawresults.csv'
 	iFileReader = None
+	iData = None
 	try:
-		iFile = open(iFilePath,'rbU')
-		iFileReader = csv.reader(iFile, delimiter=',', quotechar = '"')
+		iData = codecs.open(iFilePath, "r",encoding='ascii', errors='ignore')
+		iFileReader = csv.reader(iData, delimiter=',', quotechar = '"')
 		headerRow = next(iFileReader)
 	except:
 		print 'Failed to read input CSV file "'+str(sys.argv[1])+'"'
