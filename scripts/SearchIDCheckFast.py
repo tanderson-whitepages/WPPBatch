@@ -113,15 +113,26 @@ try:
 		
 		#now iterate over input parameters for phone searches and map which column from the input file should be submitted.
 		inputFields = []
-		inputFields.append('address.country_code')
-		inputFields.append('name')
-		inputFields.append('firstname')
-		inputFields.append('lastname')
-		inputFields.append('address.street_line_1')
-		inputFields.append('address.city')
-		inputFields.append('address.state_code')
-		inputFields.append('address.postal_code')
-		inputFields.append('phone')
+		inputFields.append('primary.address.country_code')
+		inputFields.append('primary.name')
+		inputFields.append('primary.firstname')
+		inputFields.append('primary.lastname')
+		inputFields.append('primary.address.street_line_1')
+		inputFields.append('primary.address.street_line_2')
+		inputFields.append('primary.address.city')
+		inputFields.append('primary.address.state_code')
+		inputFields.append('primary.address.postal_code')
+		inputFields.append('primary.phone')
+		inputFields.append('secondary.address.country_code')
+		inputFields.append('secondary.name')
+		inputFields.append('secondary.firstname')
+		inputFields.append('secondary.lastname')
+		inputFields.append('secondary.address.street_line_1')
+		inputFields.append('secondary.address.street_line_2')
+		inputFields.append('secondary.address.city')
+		inputFields.append('secondary.address.state_code')
+		inputFields.append('secondary.address.postal_code')
+		inputFields.append('secondary.phone')
 		inputFields.append('email_address')
 		inputFields.append('ip_address')
 		inputMap = []
@@ -191,10 +202,11 @@ try:
 		if row != 'thisistheend':
 			numInputs += 1
 			#build URL
-			apiURL = 'http://proapi.whitepages.com/3.1/lead_verify_append?'
+			apiURL = 'http://proapi.whitepages.com/3.2/identity_check_fast.json?'
 			for i in inputMap:
-				if len(row[int(i[1])]) > 0:
-					apiURL += str(i[0]).lower()+'='+str(urllib.quote(row[int(i[1])]))+'&'
+				if len(row) > int(i[1]):
+					if len(row[int(i[1])]) > 0:
+						apiURL += str(i[0]).lower()+'='+str(urllib.quote(row[int(i[1])]))+'&'
 			apiURL += 'api_key='+apiKey
 			#add to testInputs
 			testInputs.addInput(row,apiURL)

@@ -33,6 +33,12 @@ for row in csvReader:
 		headers.append('Carrier')
 		headers.append('Is Valid')
 		headers.append('Is Connected')
+		headers.append('Is Prepaid')
+		headers.append('Do Not Call Registered')
+		headers.append('Reputation Level')
+		headers.append('Reputation Details')
+		headers.append('Report Count')
+		headers.append('Volume Score')
 		csvWriter.writerow(row[:-2]+headers)
 	else:
 		data = {}
@@ -50,13 +56,33 @@ for row in csvReader:
 		isValid = results.get('is_valid','')
 		isConnected = results.get('is_connected','')
 		isPrepaid = results.get('is_prepaid','')
-			
+		dncRegistered = results.get('do_not_call','')
+		rep = wppbatchlib.nvl(results.get('reputation',{}),{})
+		repLevel = rep.get('level','')
+		repVolume = rep.get('volume_score','')
+		repReport = rep.get('report_count','')
+		repDetails = ''
+		numDetails = 0
+		for x in rep.get('details',[]):
+			numDetails += 1
+			if numDetails > 1:
+				repDetails += '|'
+			repDetails += x.get('type','')
+			repDetails += ';'
+			repDetails += x.get('category','')
+			repDetails += ';'
+			repDetails += str(x.get('score',''))
 		resultRow = [error]
 		resultRow.append(lineType)
 		resultRow.append(carrier)
 		resultRow.append(isValid)
 		resultRow.append(isConnected)
 		resultRow.append(isPrepaid)
+		resultRow.append(dncRegistered)
+		resultRow.append(repLevel)
+		resultRow.append(repDetails)
+		resultRow.append(repReport)
+		resultRow.append(repVolume)
 		decodedRow = []
 		for a in resultRow:
 			if a is None:

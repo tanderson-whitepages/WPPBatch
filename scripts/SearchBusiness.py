@@ -11,14 +11,29 @@ import sys, re, csv, urllib, wppbatchlib, os, codecs
 VERSION = '0.1'
 AUTHOR = 'Trevor Anderson <tanderson@whitepages.com>'
 
+predefinedInputs = []
+inputIndex = 0
+
+def getInput():
+	global inputIndex
+	if inputIndex < len(predefinedInputs):
+		inputIndex += 1
+		return predefinedInputs[inputIndex-1]
+	else:
+		return raw_input(">")
+
 try:
 	iFilePath = None
 	rawResultsFilePath = None
+	apiHost = 'proapi.whitepages.com'
 
-	if sys.argv == None or len(sys.argv) != 2 or len(sys.argv[1]) < 5:
+	if sys.argv == None or len(sys.argv) < 2 or len(sys.argv[1]) < 5:
 		print 'Drop an input CSV file onto SearchPhone.bat to use this script.'
 		var = raw_input("Hit enter to quit")
 		quit()
+		
+	if len(sys.argv) == 3:
+		predefinedInputs = sys.argv[2].split(';')
 		
 	print '--------------------------------------------------'
 	print '  Whitepages Pro Batch Script - Find Person   '
@@ -51,22 +66,34 @@ try:
 		try:
 			f = open(os.path.dirname(os.path.realpath(sys.argv[0]))+'/../wppbatch.ini','r')
 			content = f.read()
-			mApiKey = re.search('.*api.?key\:\s?([a-zA-Z0-9]+)',content)
+			mApiKey = re.search('.*api.?key\:\\s?([a-zA-Z0-9]+)',content)
 			if mApiKey:
 				apiKey = mApiKey.group(1)
-			mThreads = re.search('.*threads\:\s?(\d+)',content)
+			mThreads = re.search('.*threads\:\\s?(\\d+)',content)
 			if mThreads:
 				numThreads = int(mThreads.group(1))
+			mHost = re.search('.*host\:\\s?([\S]+)',content)
+			if mHost:
+				apiHost = mHost.group(1)
 		except:
 			print 'Warning: no wppbatch.ini file found'
 
+		#confirm api host
+		print 'Paste or type in the API host, or just hit enter to use the default value of'
+		print '"'+apiHost+'".'
+		var = getInput()
+		if var != '':
+			apiHost = var
+		print 'Using API host = '+str(apiHost)
+		print ''
+		
 		#confirm input api key
 		if apiKey is not None:
 			print 'Paste or type in your API key, or just hit enter to use the default value of'
 			print '"'+apiKey+'".'
 		else:
 			print 'What API key do you want to use to run this test?'
-		var = raw_input(">")
+		var = getInput()
 		if var != '':
 			apiKey = var
 		print 'Using apiKey = '+str(apiKey)
@@ -78,7 +105,7 @@ try:
 			print '"'+str(numThreads)+'".'
 		else:
 			print 'How many threads would you like to run?'
-		var = raw_input(">")
+		var = getInput()
 		if var != '':
 			numThreads = int(var)
 		print 'Using threads = '+str(numThreads)
@@ -97,7 +124,7 @@ try:
 			print '"'+i+'" - hit enter to ignore this input, or choose the column to submit to it:'
 			for j in range(0,len(headerRow)):
 				print '  '+str(j)+') '+headerRow[j]
-			var = raw_input('>')
+			var = getInput()
 			if var != '':
 				inputMap.append([i,int(var)])
 				print 'Submitting "'+headerRow[int(var)]+'" values for input parameter "'+i+'"'
@@ -116,7 +143,7 @@ try:
 		var = None
 		while var != 'y' and var != 'n':
 			print 'Is this all correct? y/n'
-			var = raw_input(">")
+			var = getInput()
 			
 		if var == 'y':
 			inputsFinalized = True

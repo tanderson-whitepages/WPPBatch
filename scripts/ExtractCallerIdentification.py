@@ -1,4 +1,4 @@
-import sys, csv, json, wppbatchlib
+import sys, csv, json, wppbatchlib, datetime
 csv.field_size_limit(min(2147483647,sys.maxsize))
 
 VERSION = '0.1'
@@ -34,18 +34,13 @@ for row in csvReader:
 		headers.append('Is Valid')
 		headers.append('Is Connected')
 		headers.append('Is Prepaid')
-		headers.append('Do Not Call Registered')
-		headers.append('Reputation Level')
-		headers.append('Reputation Details')
-		headers.append('Report Count')
-		headers.append('Volume Score')
 		headers.append('First Name')
 		headers.append('Middle Name')
 		headers.append('Last Name')
 		headers.append('Age Range')
 		headers.append('Gender')
 		headers.append('Business Name')
-		headers.append('UUID')
+		headers.append('Phone Link Age')
 		headers.append('Location Type')
 		headers.append('Location Valid From')
 		headers.append('Location Valid To')
@@ -70,31 +65,17 @@ for row in csvReader:
 			print 'Error reading JSON on row '+str(rowNum)
 			csvWriter.writerow(row[:-2]+['Failed to load JSON results','','','',''])
 			continue
-		
+			
 		error = wppbatchlib.nvl(data.get('error',{}),{}).get('message','')
 		results = wppbatchlib.nvl(data.get('results',[{}]),[{}])[0]
+		
+		phoneKey = wppbatchlib.nvl(results.get('id',{}),{}).get('key','')
+		
 		lineType = results.get('line_type','')
 		carrier = results.get('carrier','')
 		isValid = results.get('is_valid','')
 		isConnected = results.get('is_connected','')
 		isPrepaid = results.get('is_prepaid','')
-		dncRegistered = results.get('do_not_call','')
-		rep = wppbatchlib.nvl(results.get('reputation',{}),{})
-		repLevel = rep.get('level','')
-		repVolume = rep.get('volume_score',0)
-		repReport = rep.get('report_count',0)
-		repDetails = ''
-		numDetails = 0
-		
-		for x in rep.get('details',[]):
-			numDetails += 1
-			if numDetails > 1:
-				repDetails += '|'
-			repDetails += x.get('type','')
-			repDetails += ';'
-			repDetails += x.get('category','')
-			repDetails += ';'
-			repDetails += str(x.get('score',''))
 		
 		#choose the owner who has an address, if any
 		belongsTo = wppbatchlib.nvl(results.get('belongs_to',[{}]),[{}])[0]
@@ -110,6 +91,17 @@ for row in csvReader:
 								belongsTo = owner
 								break
 		location = wppbatchlib.nvl(results.get('associated_locations',[{}]),[{}])[0]
+		
+		
+		#find phone contact creation date
+		contact_creation_date = ''
+		for ph in wppbatchlib.nvl(belongsTo.get('phones',[{}]),[{}]):
+			pK = wppbatchlib.nvl(ph.get('id',{}),{}).get('key','')
+			if pK == phoneKey:
+				ccd = ph.get('contact_creation_date','')
+				if ccd is not None and ccd <> '':
+					contact_creation_date = datetime.datetime.fromtimestamp(int(ccd)).strftime('%Y-%m-%d %H:%M:%S')
+				break
 		
 		UUID = wppbatchlib.nvl(belongsTo.get('id',{}),{}).get('uuid','')
 		personName = wppbatchlib.nvl(belongsTo.get('names',[{}]),[{}])[0]
@@ -160,18 +152,13 @@ for row in csvReader:
 		resultRow.append(isValid)
 		resultRow.append(isConnected)
 		resultRow.append(isPrepaid)
-		resultRow.append(dncRegistered)
-		resultRow.append(repLevel)
-		resultRow.append(repDetails)
-		resultRow.append(repReport)
-		resultRow.append(repVolume)
 		resultRow.append(firstName)
 		resultRow.append(middleName)
 		resultRow.append(lastName)
 		resultRow.append(ageRange)
 		resultRow.append(gender)
 		resultRow.append(bizName)
-		resultRow.append(UUID)
+		resultRow.append(contact_creation_date)
 		resultRow.append(locType)
 		resultRow.append(validFrom)
 		resultRow.append(validTo)
