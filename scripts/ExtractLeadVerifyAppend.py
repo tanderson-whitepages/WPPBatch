@@ -89,7 +89,24 @@ for row in csvReader:
 			continue
 		
 		resultRow = []
-		resultRow.append('')
+		
+		
+		errors = []
+		
+		
+		if wppbatchlib.nvl(data.get('name_checks',{}),{}).get('error',None) is not None:
+			errors.append('Name: '+wppbatchlib.nvl(data.get('name_checks',{}),{}).get('error',{}).get('message',''))
+		if wppbatchlib.nvl(data.get('phone_checks',{}),{}).get('error',None) is not None:
+			errors.append('Phone: '+wppbatchlib.nvl(data.get('phone_checks',{}),{}).get('error',{}).get('message',''))
+		if wppbatchlib.nvl(data.get('address_checks',{}),{}).get('error',None) is not None:
+			errors.append('Address: '+wppbatchlib.nvl(data.get('address_checks',{}),{}).get('error',{}).get('message',''))
+		if wppbatchlib.nvl(data.get('email_address_checks',{}),{}).get('error',None) is not None:
+			errors.append('Email: '+wppbatchlib.nvl(data.get('email_address_checks',{}),{}).get('error',{}).get('message',''))
+		if wppbatchlib.nvl(data.get('ip_address_checks',{}),{}).get('error',None) is not None:
+			errors.append('IP Address: '+wppbatchlib.nvl(data.get('ip_address_checks',{}),{}).get('error',{}).get('message',''))
+		
+		resultRow.append('; '.join(errors))
+		
 		resultRow.append(wppbatchlib.nvl(wppbatchlib.nvl(data.get('name_checks',{}),{}).get('warnings',['']),[''])[0])
 		resultRow.append(wppbatchlib.nvl(wppbatchlib.nvl(data.get('name_checks',{}),{}).get('celebrity_name',''),''))
 		resultRow.append(wppbatchlib.nvl(wppbatchlib.nvl(data.get('name_checks',{}),{}).get('fake_name',''),''))
