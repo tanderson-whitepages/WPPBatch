@@ -33,7 +33,13 @@ for row in csvReader:
 		headers.append('Is Valid')
 		headers.append('Is Connected')
 		headers.append('Is Prepaid')
-		headers.append('Phone Owner Number')
+		headers.append('Do Not Call Registered')
+		headers.append('Reputation Level')
+		headers.append('Reputation Details')
+		headers.append('Report Count')
+		headers.append('Volume Score')
+		headers.append('Result Number')
+		headers.append('Result Type')
 		headers.append('First Name')
 		headers.append('Middle Name')
 		headers.append('Last Name')
@@ -75,13 +81,20 @@ for row in csvReader:
 		isValid = results.get('is_valid','')
 		isConnected = results.get('is_connected','')
 		isPrepaid = results.get('is_prepaid','')
-				
+		
 		belongsTo = wppbatchlib.nvl(results.get('belongs_to',[{}]),[{}])
 		phoneLocation = wppbatchlib.nvl(results.get('best_location',{}),{})
 		
-		ownerNum = 0
+		personsBusinessesProcessed = []
+		
+		resultNum = 0
 		for owner in belongsTo:
-			ownerNum += 1
+			resultNum += 1
+			
+			id = owner.get('id',{}).get('key','')
+			if id in personsBusinessesProcessed:
+				continue
+			personsBusinessesProcessed.append(id)
 			
 			personName = wppbatchlib.nvl(owner.get('names',[{}]),[{}])[0]
 			firstName = personName.get('first_name','')
@@ -114,8 +127,12 @@ for row in csvReader:
 			if locs == []:
 				locs = [{}]
 			
+			locNum = 0
+			
 			for location in locs:
-					
+						
+				locNum += 1
+				
 				isHistorical = location.get('is_historical','')	
 				locType = location.get('type','')
 				start = wppbatchlib.nvl(wppbatchlib.nvl(location.get('valid_for',{}),{}).get('start',{}),{})
@@ -143,7 +160,13 @@ for row in csvReader:
 				resultRow.append(isValid)
 				resultRow.append(isConnected)
 				resultRow.append(isPrepaid)
-				resultRow.append(ownerNum)
+				
+				resultRow.append(resultNum)
+				if locNum == 1:
+					resultRow.append('Subscriber Current Address')
+				else:
+					resultRow.append('Subscriber Historical Address')
+					
 				resultRow.append(firstName)
 				resultRow.append(middleName)
 				resultRow.append(lastName)
@@ -184,6 +207,79 @@ for row in csvReader:
 					csvWriter.writerow(row[:-2]+decodedRow)
 				except:
 					csvWriter.writerow(row[:-2]+['Failed to parse API results'])
+					
+					
+				# now grab household members
+				legalEntitiesAt = wppbatchlib.nvl(location.get('legal_entities_at',[{}]),[{}])
+				
+				for other in legalEntitiesAt:
+					id = other.get('id',{}).get('key','')
+					if id in personsBusinessesProcessed:
+						continue
+						
+					resultNum += 1
+					
+					personsBusinessesProcessed.append(id)
+					
+					HpersonName = wppbatchlib.nvl(other.get('names',[{}]),[{}])[0]
+					HfirstName = HpersonName.get('first_name','')
+					HmiddleName = HpersonName.get('middle_name','')
+					HlastName = HpersonName.get('last_name','')
+					HageRange = str(wppbatchlib.nvl(other.get('age_range',{}),{}).get('start','?'))
+					HageRange +='-'+str(wppbatchlib.nvl(other.get('age_range',{}),{}).get('end','?'))
+					if HageRange == '?-?':
+						HageRange = ''
+					Hgender = other.get('gender','')
+					HbizName = other.get('name','')
+					
+					resultRow = [error]
+					resultRow.append(lineType)
+					resultRow.append(carrier)
+					resultRow.append(isValid)
+					resultRow.append(isConnected)
+					resultRow.append(isPrepaid)
+					resultRow.append(resultNum)
+					resultRow.append('Household Member')
+					resultRow.append(HfirstName)
+					resultRow.append(HmiddleName)
+					resultRow.append(HlastName)
+					resultRow.append(HageRange)
+					resultRow.append(Hgender)
+					resultRow.append(HbizName)
+					resultRow.append(isHistorical)
+					resultRow.append(locType)
+					resultRow.append(validFrom)
+					resultRow.append(validTo)
+					resultRow.append(street)
+					resultRow.append(city)
+					resultRow.append(state)
+					resultRow.append(postalCode)
+					resultRow.append(zip4)
+					resultRow.append(country)
+					resultRow.append(deliveryPoint)
+					resultRow.append(usageType)
+					resultRow.append(rcvMail)
+					resultRow.append(latLonAccuracy)
+					resultRow.append(latitude)
+					resultRow.append(longitude)
+					resultRow.append(phoneNumber)
+					
+					decodedRow = []
+					for a in resultRow:
+						if a is None:
+							a = ''
+						try:
+							decodedRow.append(a.encode('utf-8'))
+						except:
+							try:
+								decodedRow.append(str(a))
+							except:
+								decodedRow.append(a)
+						
+					try:
+						csvWriter.writerow(row[:-2]+decodedRow)
+					except:
+						csvWriter.writerow(row[:-2]+['Failed to parse API results'])
 
 print 'All done!'
 print 'You can find your results file here: '+str(resultsFilePath)

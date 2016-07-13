@@ -175,6 +175,7 @@ try:
 		
 		print ''
 		print 'All done. Here is a summary of what you\'re about to search:'
+		print 'API host: '+apiHost
 		print 'API key: '+str(apiKey)
 		print '# Threads: '+str(numThreads)
 		print 'Use Metro: '+str(useMetro)
@@ -214,7 +215,7 @@ try:
 		if row != 'thisistheend':
 			numInputs += 1
 			#build URL
-			apiURL = 'http://proapi.whitepages.com/2.1/person.json?'
+			apiURL = 'http://'+apiHost+'/2.1/person.json?'
 			for i in inputMap:
 				if len(row[int(i[1])]) > 0:
 					apiURL += str(i[0]).lower()+'='+str(urllib.quote(row[int(i[1])]))+'&'

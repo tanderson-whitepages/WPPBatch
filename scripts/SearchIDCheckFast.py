@@ -165,6 +165,7 @@ try:
 		
 		print ''
 		print 'All done. Here is a summary of what you\'re about to search:'
+		print 'API host: '+apiHost
 		print 'API key: '+str(apiKey)
 		print '# Threads: '+str(numThreads)
 		print 'Inputs to submit:'
@@ -202,7 +203,7 @@ try:
 		if row != 'thisistheend':
 			numInputs += 1
 			#build URL
-			apiURL = 'http://proapi.whitepages.com/3.2/identity_check_fast.json?'
+			apiURL = 'http://'+apiHost+'/3.2/identity_check_fast.json?'
 			for i in inputMap:
 				if len(row) > int(i[1]):
 					if len(row[int(i[1])]) > 0:
