@@ -69,7 +69,8 @@ headerRow.append("IP Location Postal Code")
 headerRow.append("IP Location City")
 headerRow.append("IP Location Country")
 headerRow.append("IP Location Continent")
-headerRow.append("IP Distance")
+headerRow.append("IP Distance from Address")
+headerRow.append("IP Distance from Phone")
 headerRow.append("IP Is Proxy")
 
 rowNum = 0
@@ -155,6 +156,7 @@ for row in csvReader:
 		resultRow.append(wppbatchlib.nvl(wppbatchlib.nvl(data.get('ip_address_checks',{}),{}).get('geolocation',{}),{}).get('country_name',''))
 		resultRow.append(wppbatchlib.nvl(wppbatchlib.nvl(data.get('ip_address_checks',{}),{}).get('geolocation',{}),{}).get('continent_code',''))
 		resultRow.append(wppbatchlib.nvl(wppbatchlib.nvl(data.get('ip_address_checks',{}),{}).get('distance_from_address',''),''))
+		resultRow.append(wppbatchlib.nvl(wppbatchlib.nvl(data.get('ip_address_checks',{}),{}).get('distance_from_phone',''),''))
 		resultRow.append(wppbatchlib.nvl(wppbatchlib.nvl(data.get('ip_address_checks',{}),{}).get('is_proxy',''),''))
 		decodedRow = []
 		for a in resultRow:
