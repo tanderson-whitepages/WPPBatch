@@ -22,9 +22,6 @@ csvWriter = csv.writer(open(resultsFilePath,'wb'),delimiter=',',quotechar='"')
 
 headerRow = []
 headerRow.append("Error")
-headerRow.append("Name Warning")
-headerRow.append("Name Matches Celebrity")
-headerRow.append("Name Is Garbled")
 headerRow.append("Phone Contact Score")
 headerRow.append("Phone Is Valid")
 headerRow.append("Phone Warning")
@@ -108,9 +105,6 @@ for row in csvReader:
 		
 		resultRow.append('; '.join(errors))
 		
-		resultRow.append(wppbatchlib.nvl(wppbatchlib.nvl(data.get('name_checks',{}),{}).get('warnings',['']),[''])[0])
-		resultRow.append(wppbatchlib.nvl(wppbatchlib.nvl(data.get('name_checks',{}),{}).get('celebrity_name',''),''))
-		resultRow.append(wppbatchlib.nvl(wppbatchlib.nvl(data.get('name_checks',{}),{}).get('fake_name',''),''))
 		resultRow.append(wppbatchlib.nvl(wppbatchlib.nvl(data.get('phone_checks',{}),{}).get('phone_contact_score',''),''))
 		resultRow.append(wppbatchlib.nvl(wppbatchlib.nvl(data.get('phone_checks',{}),{}).get('is_valid',''),''))
 		resultRow.append(wppbatchlib.nvl(wppbatchlib.nvl(data.get('phone_checks',{}),{}).get('warnings',''),''))
