@@ -1,11 +1,11 @@
 import sys, re, csv, urllib, wppbatchlib, os, codecs
 
 ###################################################################################################
-#  SEARCH PERSON
-#  This script runs Whitepages Pro API find person queries based on an input CSV file.
+#  SEARCH ID CHECK
+#  This script runs Whitepages Pro API identity check queries based on an input CSV file.
 #  It walks the user through the required input parameters, executes the queries, and
 #  writes the raw JSON responses to disk. The user can then pass that result file to
-#  ExtractPerson.bat to parse that JSON and generate the final results file.
+#  ExtractIDCheck.bat to parse that JSON and generate the final results file.
 ###################################################################################################
 
 VERSION = '0.1'
@@ -13,8 +13,6 @@ AUTHOR = 'Trevor Anderson <tanderson@whitepages.com>'
 
 predefinedInputs = []
 inputIndex = 0
-
-print sys.argv
 
 def getInput():
 	global inputIndex
@@ -38,7 +36,7 @@ try:
 		predefinedInputs = sys.argv[2].split(';')
 		
 	print '--------------------------------------------------'
-	print '  Whitepages Pro Batch Script - Find Person   '
+	print '  Whitepages Pro Batch Script - Identity Check'
 	print '   Author: '+AUTHOR
 	print '   Version '+VERSION
 	print '--------------------------------------------------'
@@ -46,8 +44,6 @@ try:
 
 	apiKey = None
 	numThreads = None
-	useMetro = False
-	useHistoric = False
 
 	#	READ AND VALIDATE INPUT FILE
 	iFilePath = sys.argv[1]
@@ -55,15 +51,14 @@ try:
 	iFileReader = None
 	iData = None
 	try:
-		#iData = codecs.open(iFilePath, "r",encoding='ascii', errors='ignore')
-		iFileReader = csv.reader(open(iFilePath), delimiter=',', quotechar = '"')
+		iData = codecs.open(iFilePath, "r",encoding='ascii', errors='ignore')
+		iFileReader = csv.reader(iData, delimiter=',', quotechar = '"')
 		headerRow = next(iFileReader)
 	except:
 		print 'Failed to read input CSV file "'+str(sys.argv[1])+'"'
 		var = raw_input("Hit enter to quit")
 		quit()
 		
-	print 'foo'
 	#	SET UP INPUT PARAMETERS 
 	inputsFinalized = False
 	while inputsFinalized == False:
@@ -77,15 +72,7 @@ try:
 			mThreads = re.search('.*threads\:\\s?(\\d+)',content)
 			if mThreads:
 				numThreads = int(mThreads.group(1))
-			mMetro = re.search('.*searchperson\.metro\:\\s?(\\w+)',content)
-			if mMetro:
-				if mMetro.group(1).lower() == 'true':
-					useMetro = True
-			mHistoric = re.search('.*searchperson\.historical\:\\s?(\\w+)',content)
-			if mHistoric:
-				if mHistoric.group(1).lower() == 'true':
-					useHistoric = True
-			mHost = re.search('.*host\:\\s?([^\\s]+)',content)
+			mHost = re.search('.*host\:\\s?([\S]+)',content)
 			if mHost:
 				apiHost = mHost.group(1)
 		except:
@@ -124,37 +111,32 @@ try:
 		print 'Using threads = '+str(numThreads)
 		print ''
 		
-		#confirm whether to use metro
-		if useMetro is not None:
-			print 'Would you like to use metro area expansion? Enter y/n or just hit enter to use'
-			print 'the default value of '+str(useMetro)+'.'
-		else:
-			print 'Would you like to use metro area expansion? y/n'
-		var = getInput()
-		if var != '':
-			if var == 'y':
-				useMetro = True
-			else:
-				useMetro = False
-		print 'Using metro = '+str(useMetro)
-		print ''
-		
-		#confirm whether to use historical
-		if useHistoric is not None:
-			print 'Would you like to use historical search? Enter y/n or just hit enter to use'
-			print 'the default value of '+str(useHistoric)+'.'
-		else:
-			print 'Would you like to use historical search? y/n'
-		var = getInput()
-		if var != '':
-			if var == 'y':
-				useHistoric = True
-			else:
-				useHistoric = False
-		print 'Using historical = '+str(useHistoric)
-		print ''
 		#now iterate over input parameters for phone searches and map which column from the input file should be submitted.
-		inputFields = ['name','first_name','last_name','street_line_1','city','state_code','postal_code']
+		inputFields = []
+		inputFields.append('primary.address.country_code')
+		inputFields.append('primary.name')
+		inputFields.append('primary.firstname')
+		inputFields.append('primary.lastname')
+		inputFields.append('primary.address.street_line_1')
+		inputFields.append('primary.address.street_line_2')
+		inputFields.append('primary.address.city')
+		inputFields.append('primary.address.state_code')
+		inputFields.append('primary.address.postal_code')
+		inputFields.append('primary.phone.country_hint')
+		inputFields.append('primary.phone')
+		inputFields.append('secondary.address.country_code')
+		inputFields.append('secondary.name')
+		inputFields.append('secondary.firstname')
+		inputFields.append('secondary.lastname')
+		inputFields.append('secondary.address.street_line_1')
+		inputFields.append('secondary.address.street_line_2')
+		inputFields.append('secondary.address.city')
+		inputFields.append('secondary.address.state_code')
+		inputFields.append('secondary.address.postal_code')
+		inputFields.append('secondary.phone.country_hint')
+		inputFields.append('secondary.phone')
+		inputFields.append('email_address')
+		inputFields.append('ip_address')
 		inputMap = []
 		
 		print 'We\'re now going to iterate over all of the possible input parameters. '
@@ -166,10 +148,20 @@ try:
 			print '"'+i+'" - hit enter to ignore this input, or choose the column to submit to it:'
 			for j in range(0,len(headerRow)):
 				print '  '+str(j)+') '+headerRow[j]
-			var = getInput()
+			var = -1
+			fieldToSubmit = None
+			while fieldToSubmit is None:
+				var = getInput()
+				if var == '':
+					break
+				try:
+					fieldToSubmit = headerRow[int(var)]
+				except:
+					print 'That was not a valid selection, try again:'
+				
 			if var != '':
 				inputMap.append([i,int(var)])
-				print 'Submitting "'+headerRow[int(var)]+'" values for input parameter "'+i+'"'
+				print 'Submitting "'+fieldToSubmit+'" values for input parameter "'+i+'"'
 			else:
 				print 'Ignoring input parameter "'+i+'"'
 		
@@ -178,8 +170,6 @@ try:
 		print 'API host: '+apiHost
 		print 'API key: '+str(apiKey)
 		print '# Threads: '+str(numThreads)
-		print 'Use Metro: '+str(useMetro)
-		print 'Use Historical: '+str(useHistoric)
 		print 'Inputs to submit:'
 		for i in inputMap:
 			print '  "'+headerRow[i[1]]+'" for "'+i[0]+'"'
@@ -213,23 +203,13 @@ try:
 	while not doneWithFile:
 		row = next(iFileReader, 'thisistheend')
 		if row != 'thisistheend':
-			haveStreet = False
-			for i in inputMap:
-				if str(i[0]) == 'street_line_1' and len(row[int(i[1])])>0:
-					haveStreet = True
-					break
-					
 			numInputs += 1
 			#build URL
-			apiURL = 'http://'+apiHost+'/2.1/person.json?'
+			apiURL = 'http://'+apiHost+'/3.2/identity_check_local.json?'
 			for i in inputMap:
-				if len(row[int(i[1])]) > 0:
-					apiURL += str(i[0]).lower()+'='+str(urllib.quote(row[int(i[1])]))+'&'
-			
-			if useMetro:
-				apiURL += 'use_metro=true&'
-			if useHistoric and haveStreet:
-				apiURL += 'use_historical=true&'
+				if len(row) > int(i[1]):
+					if len(row[int(i[1])]) > 0:
+						apiURL += str(i[0]).lower()+'='+str(urllib.quote(row[int(i[1])]))+'&'
 			apiURL += 'api_key='+apiKey
 			#add to testInputs
 			testInputs.addInput(row,apiURL)

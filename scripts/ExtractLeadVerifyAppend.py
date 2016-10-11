@@ -52,6 +52,7 @@ headerRow.append("Address Resident Gender")
 headerRow.append("Address Type")
 headerRow.append("Address Is Active")
 headerRow.append("Address Is Commercial")
+headerRow.append("Address Resident Phone")
 headerRow.append("Email Contact Score")
 headerRow.append("Email Warning")
 headerRow.append("Email Error")
@@ -69,6 +70,7 @@ headerRow.append("IP Location Continent")
 headerRow.append("IP Distance from Address")
 headerRow.append("IP Distance from Phone")
 headerRow.append("IP Is Proxy")
+headerRow.append("IP Connection Type")
 
 rowNum = 0
 for row in csvReader:
@@ -135,6 +137,7 @@ for row in csvReader:
 		resultRow.append(wppbatchlib.nvl(wppbatchlib.nvl(data.get('address_checks',{}),{}).get('type',''),''))
 		resultRow.append(wppbatchlib.nvl(wppbatchlib.nvl(data.get('address_checks',{}),{}).get('is_active',''),''))
 		resultRow.append(wppbatchlib.nvl(wppbatchlib.nvl(data.get('address_checks',{}),{}).get('is_commercial',''),''))
+		resultRow.append(wppbatchlib.nvl(wppbatchlib.nvl(data.get('address_checks',{}),{}).get('resident_phone',''),''))
 		resultRow.append(wppbatchlib.nvl(wppbatchlib.nvl(data.get('email_address_checks',{}),{}).get('email_contact_score',''),''))
 		resultRow.append(wppbatchlib.nvl(wppbatchlib.nvl(data.get('email_address_checks',{}),{}).get('warnings',['']),[''])[0])
 		resultRow.append(wppbatchlib.nvl(wppbatchlib.nvl(data.get('email_address_checks',{}),{}).get('error',{}),{}).get('message'))
@@ -152,6 +155,7 @@ for row in csvReader:
 		resultRow.append(wppbatchlib.nvl(wppbatchlib.nvl(data.get('ip_address_checks',{}),{}).get('distance_from_address',''),''))
 		resultRow.append(wppbatchlib.nvl(wppbatchlib.nvl(data.get('ip_address_checks',{}),{}).get('distance_from_phone',''),''))
 		resultRow.append(wppbatchlib.nvl(wppbatchlib.nvl(data.get('ip_address_checks',{}),{}).get('is_proxy',''),''))
+		resultRow.append(wppbatchlib.nvl(wppbatchlib.nvl(data.get('ip_address_checks',{}),{}).get('connection_type',''),''))
 		decodedRow = []
 		for a in resultRow:
 			if a is None:

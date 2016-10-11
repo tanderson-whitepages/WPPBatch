@@ -74,7 +74,9 @@ for row in csvReader:
 					phoneNumber = p.get('phone_number','')
 					break
 			
-			locs = result.get('locations',[{}])				
+			locs = result.get('locations',[{}])	
+			if locs is None:
+				locs = []
 			for location in locs:
 					
 				isHistorical = location.get('is_historical','')	

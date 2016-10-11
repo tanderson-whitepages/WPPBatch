@@ -64,12 +64,12 @@ for row in csvReader:
 		
 		error = wppbatchlib.nvl(data.get('error',{}),{}).get('message','')
 		results = wppbatchlib.nvl(data.get('results',[{}]),[{}])
-					
-							
+			
 		if error == '' and len(results[0].keys()) == 0:
 			error = 'No results found'
 		
 		resultNum = 0
+		actualResultNum = 0
 		for primaryPerson in results:
 			primaryPersonKey = primaryPerson.get('id',{}).get('key')
 			resultNum += 1
@@ -127,7 +127,9 @@ for row in csvReader:
 							phoneNumber = p.get('phone_number','')
 							break
 				
+					actualResultNum += 1
 					resultRow = [error]
+					resultRow.append(actualResultNum)
 					resultRow.append(resultNum)
 					resultRow.append(personType)
 					resultRow.append(firstName)

@@ -75,10 +75,23 @@ for row in csvReader:
 			resultNum += 1
 			
 			locs = primaryPerson.get('locations',[{}])
+			bestIndex = 0
 			
+			for locIndex in range (0,len(locs)):
+				isHistorical = locs[locIndex].get('is_historical','')	
+				if isHistorical == False:
+					bestIndex = locIndex
+					break
+			
+			if len(locs) > 0:
+				locs = [locs[bestIndex]]
+			else:
+				csvWriter.writerow(row[:-2]+['No location found',resultNum,'','',''])
+				
 			for location in locs:
 					
 				isHistorical = location.get('is_historical','')	
+				
 				locType = location.get('type','')
 				start = wppbatchlib.nvl(wppbatchlib.nvl(location.get('valid_for',{}),{}).get('start',{}),{})
 				end = wppbatchlib.nvl(wppbatchlib.nvl(location.get('valid_for',{}),{}).get('stop',{}),{})

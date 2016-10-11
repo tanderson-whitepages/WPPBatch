@@ -29,6 +29,7 @@ for row in csvReader:
 	if rowNum == 1:
 		headers = ['Error']
 		headers.append('Result Number')
+		headers.append('UUID')
 		headers.append('First Name')
 		headers.append('Middle Name')
 		headers.append('Last Name')
@@ -65,12 +66,12 @@ for row in csvReader:
 		error = wppbatchlib.nvl(data.get('error',{}),{}).get('message','')
 		results = wppbatchlib.nvl(data.get('results',[{}]),[{}])
 					
-		if results == None or len(results[0].keys()) == 0:
-			error = 'No results found'
+		if error == '':
+			if results == None or len(results[0].keys()) == 0:
+				error = 'No results found'
 		
 		resultNum = 0
 		for location in results:
-			resultNum += 1
 					
 			isHistorical = location.get('is_historical','')	
 			locType = location.get('type','')
@@ -91,7 +92,9 @@ for row in csvReader:
 			
 			#fetch occupants
 			for occupant in wppbatchlib.nvl(location.get('legal_entities_at',[{}]),[{}]):
+				resultNum += 1
 					
+				id = occupant.get('id',{}).get('key','')	
 				personName = wppbatchlib.nvl(occupant.get('names',[{}]),[{}])[0]
 				firstName = personName.get('first_name','')
 				middleName = personName.get('middle_name','')
@@ -118,6 +121,7 @@ for row in csvReader:
 			
 				resultRow = [error]
 				resultRow.append(resultNum)
+				resultRow.append(id)
 				resultRow.append(firstName)
 				resultRow.append(middleName)
 				resultRow.append(lastName)
