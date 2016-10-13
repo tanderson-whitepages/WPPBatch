@@ -1,9 +1,8 @@
-import sys, csv, json, wppbatchlib, datetime
+import sys, csv, json, wppbatchlib
 csv.field_size_limit(min(2147483647,sys.maxsize))
 
 VERSION = '0.1'
 AUTHOR = 'Trevor Anderson <tanderson@whitepages.com>'
-
 
 iFilePath = None
 resultsFilePath = None
@@ -16,7 +15,7 @@ if sys.argv == None or len(sys.argv) != 2 or len(sys.argv[1]) < 5 or sys.argv[1]
 
 iFilePath = sys.argv[1]
 resultsFilePath = sys.argv[1][:-15]+'_results.csv'
-print 'Extracting Caller Identification results from '+str(iFilePath)
+print 'Extracting Reverse Phone results from '+str(iFilePath)
 
 csvReader = csv.reader(open(iFilePath,'rbU'), delimiter=',', quotechar = '"')
 csvWriter = csv.writer(open(resultsFilePath,'wb'),delimiter=',',quotechar='"')
@@ -32,18 +31,11 @@ for row in csvReader:
 		headers.append('Line Type')
 		headers.append('Carrier')
 		headers.append('Is Valid')
-		headers.append('Is Connected')
 		headers.append('Is Prepaid')
-		headers.append('First Name')
-		headers.append('Middle Name')
-		headers.append('Last Name')
+		headers.append('Is Commercial')
+		headers.append('Name')
 		headers.append('Age Range')
 		headers.append('Gender')
-		headers.append('Business Name')
-		headers.append('Phone Link Age')
-		headers.append('Location Type')
-		headers.append('Location Valid From')
-		headers.append('Location Valid To')
 		headers.append('Street')
 		headers.append('City')
 		headers.append('State')
@@ -51,8 +43,7 @@ for row in csvReader:
 		headers.append('Zip+4')
 		headers.append('Country')
 		headers.append('Location Delivery Point')
-		headers.append('Location Usage Type')
-		headers.append('Location Receiving Mail')
+		headers.append('Location Is Active')
 		headers.append('Location LatLon Accuracy')
 		headers.append('Location Latitude')
 		headers.append('Location Longitude')
@@ -65,134 +56,82 @@ for row in csvReader:
 			print 'Error reading JSON on row '+str(rowNum)
 			csvWriter.writerow(row[:-2]+['Failed to load JSON results','','','',''])
 			continue
-			
+		
+		resultNum = 0
+		
 		error = wppbatchlib.nvl(data.get('error',{}),{}).get('message','')
-		results = wppbatchlib.nvl(data.get('results',[{}]),[{}])[0]
+		inputPhone = data.get('phone_number','')
+		lineType = data.get('line_type','')
+		carrier = data.get('carrier','')
+		isValid = data.get('is_valid','')
+		isPrepaid = data.get('is_prepaid','')
+		isCommercial = data.get('is_commercial','')
+				
+		belongsTo = wppbatchlib.nvl(data.get('belongs_to',[{}]),[{}])
+		currAddresses = wppbatchlib.nvl(data.get('current_addresses',[{}]),[{}])
+		associatedPeople = wppbatchlib.nvl(data.get('associated_people',[]),[])
 		
-		phoneKey = wppbatchlib.nvl(results.get('id',{}),{}).get('key','')
-		
-		lineType = results.get('line_type','')
-		carrier = results.get('carrier','')
-		isValid = results.get('is_valid','')
-		isConnected = results.get('is_connected','')
-		isPrepaid = results.get('is_prepaid','')
-		
-		#choose the owner who has an address, if any
-		belongsTo = wppbatchlib.nvl(results.get('belongs_to',[{}]),[{}])[0]
-		for owner in wppbatchlib.nvl(results.get('belongs_to',[{}]),[{}])[1:]:
-			if owner is not None:
-				if owner.get('id',{}).get('type') == 'Business' and 'Ephemeral' not in wppbatchlib.nvl(owner.get('id',{}),{}).get('uuid',''):
-					belongsTo = owner
-					break
-				if owner.get('locations',[]) is not None:
-					if len(owner.get('locations',[])) > 0:
-						for l in owner.get('locations',[]):
-							if l.get('is_historical','') == False:
-								belongsTo = owner
-								break
-		location = wppbatchlib.nvl(results.get('associated_locations',[{}]),[{}])[0]
-		
-		
-		#find phone contact creation date
-		contact_creation_date = ''
-		for ph in wppbatchlib.nvl(belongsTo.get('phones',[{}]),[{}]):
-			pK = wppbatchlib.nvl(ph.get('id',{}),{}).get('key','')
-			if pK == phoneKey:
-				ccd = ph.get('contact_creation_date','')
-				if ccd is not None and ccd <> '':
-					contact_creation_date = datetime.datetime.fromtimestamp(int(ccd)).strftime('%Y-%m-%d %H:%M:%S')
-				break
-		
-		UUID = wppbatchlib.nvl(belongsTo.get('id',{}),{}).get('uuid','')
-		personName = wppbatchlib.nvl(belongsTo.get('names',[{}]),[{}])[0]
-		firstName = personName.get('first_name','')
-		middleName = personName.get('middle_name','')
-		lastName = personName.get('last_name','')
-		ageRange = str(wppbatchlib.nvl(belongsTo.get('age_range',{}),{}).get('start','?'))
-		ageRange +='-'+str(wppbatchlib.nvl(belongsTo.get('age_range',{}),{}).get('end','?'))
-		if ageRange == '?-?':
-			ageRange = ''
-		gender = belongsTo.get('gender','')
-		bizName = belongsTo.get('name','')
-		
-		#if we ran on a caller identification key, then we want to just take the result best_location.
-		#however, if we ran a full reverse phone pull and are trying to parse out a result that conforms
-		#to caller identification, then we need to override the phone location with the person location,
-		#if it exists. 
-		locs = belongsTo.get('locations',None)
-		if locs is not None:
-			for l in locs:
-				if l.get('is_historical',None) == False:
-					location = l
-					break
-		
-		locType = location.get('type','')
-		start = wppbatchlib.nvl(wppbatchlib.nvl(location.get('valid_for',{}),{}).get('start',{}),{})
-		end = wppbatchlib.nvl(wppbatchlib.nvl(location.get('valid_for',{}),{}).get('stop',{}),{})
-		validFrom = str(start.get('year',''))+'-'+str(start.get('month',''))+'-'+str(start.get('day',''))
-		validTo = str(end.get('year',''))+'-'+str(end.get('month',''))+'-'+str(end.get('day',''))	
-		
-		street = location.get('standard_address_line1','')
-		city = location.get('city','')
-		state = location.get('state_code','')
-		postalCode = location.get('postal_code','')
-		zip4 = location.get('zip4','')
-		country = location.get('country_code','')
-		deliveryPoint = location.get('delivery_point','')
-		usageType = location.get('usage','')
-		rcvMail = location.get('is_receiving_mail','')
-		
-		latLonAccuracy = wppbatchlib.nvl(location.get('lat_long',{}),{}).get('accuracy','')
-		latitude = wppbatchlib.nvl(location.get('lat_long',{}),{}).get('latitude','')
-		longitude = wppbatchlib.nvl(location.get('lat_long',{}),{}).get('longitude','')
-		
-		resultRow = [error]
-		resultRow.append(lineType)
-		resultRow.append(carrier)
-		resultRow.append(isValid)
-		resultRow.append(isConnected)
-		resultRow.append(isPrepaid)
-		resultRow.append(firstName)
-		resultRow.append(middleName)
-		resultRow.append(lastName)
-		resultRow.append(ageRange)
-		resultRow.append(gender)
-		resultRow.append(bizName)
-		resultRow.append(contact_creation_date)
-		resultRow.append(locType)
-		resultRow.append(validFrom)
-		resultRow.append(validTo)
-		resultRow.append(street)
-		resultRow.append(city)
-		resultRow.append(state)
-		resultRow.append(postalCode)
-		resultRow.append(zip4)
-		resultRow.append(country)
-		resultRow.append(deliveryPoint)
-		resultRow.append(usageType)
-		resultRow.append(rcvMail)
-		resultRow.append(latLonAccuracy)
-		resultRow.append(latitude)
-		resultRow.append(longitude)
-		
-		decodedRow = []
-		for a in resultRow:
-			if a is None:
-				a = ''
-			try:
-				decodedRow.append(a.encode('utf-8'))
-			except:
-				try:
-					decodedRow.append(str(a))
-				except:
-					decodedRow.append(a)
+		for owner in [belongsTo[0]]:
+	
+			name = wppbatchlib.nvl(owner.get('name',''),'')
+			ageRange = wppbatchlib.nvl(owner.get('age_range',''),'')
+			gender = owner.get('gender','')
 			
-		try:
-			csvWriter.writerow(row[:-2]+decodedRow)
-		except:
-			csvWriter.writerow(row[:-2]+['Failed to parse API results'])
+			for location in [currAddresses[0]]:
+								
+				street = location.get('street_line_1','')
+				city = location.get('city','')
+				state = location.get('state_code','')
+				postalCode = location.get('postal_code','')
+				zip4 = location.get('zip4','')
+				country = location.get('country_code','')
+				deliveryPoint = location.get('delivery_point','')
+				isActive = location.get('is_active','')
+				
+				latLonAccuracy = wppbatchlib.nvl(location.get('lat_long',{}),{}).get('accuracy','')
+				latitude = wppbatchlib.nvl(location.get('lat_long',{}),{}).get('latitude','')
+				longitude = wppbatchlib.nvl(location.get('lat_long',{}),{}).get('longitude','')
+						
+				resultNum += 1
+				resultRow = [error]
+				resultRow.append(lineType)
+				resultRow.append(carrier)
+				resultRow.append(isValid)
+				resultRow.append(isPrepaid)
+				resultRow.append(isCommercial)
+				resultRow.append(name)
+				resultRow.append(ageRange)
+				resultRow.append(gender)
+				resultRow.append(street)
+				resultRow.append(city)
+				resultRow.append(state)
+				resultRow.append(postalCode)
+				resultRow.append(zip4)
+				resultRow.append(country)
+				resultRow.append(deliveryPoint)
+				resultRow.append(isActive)
+				resultRow.append(latLonAccuracy)
+				resultRow.append(latitude)
+				resultRow.append(longitude)
+				
+				decodedRow = []
+				for a in resultRow:
+					if a is None:
+						a = ''
+					try:
+						decodedRow.append(a.encode('utf-8'))
+					except:
+						try:
+							decodedRow.append(str(a))
+						except:
+							decodedRow.append(a)
+					
+				try:
+					csvWriter.writerow(row[:-2]+decodedRow)
+				except:
+					csvWriter.writerow(row[:-2]+['Failed to parse API results'])
+					
 
 print 'All done!'
 print 'You can find your results file here: '+str(resultsFilePath)
 print ''
-		
