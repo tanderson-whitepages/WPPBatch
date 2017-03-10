@@ -24,6 +24,7 @@ except:
 	
 headerRow = []
 headerRow.append("Error")
+headerRow.append("Primary Phone Error")
 headerRow.append("Primary Phone IsValid")
 headerRow.append("Primary Phone Warning")
 headerRow.append("Primary Phone to Name")
@@ -33,8 +34,8 @@ headerRow.append("Primary Phone Country Code")
 headerRow.append("Primary Phone Line Type")
 headerRow.append("Primary Phone Carrier")
 headerRow.append("Primary Phone Is Prepaid")
-headerRow.append("Primary Phone Is Connected")
 headerRow.append("Primary Phone Is Commercial")
+headerRow.append("Primary Address Error")
 headerRow.append("Primary Address IsValid")
 headerRow.append("Primary Address Warning")
 headerRow.append("Primary Address Diagnostic")
@@ -43,6 +44,7 @@ headerRow.append("Primary Address Resident Name")
 headerRow.append("Primary Address Type")
 headerRow.append("Primary Address Is Active")
 headerRow.append("Primary Address Is Commercial")
+headerRow.append("Secondary Phone Error")
 headerRow.append("Secondary Phone IsValid")
 headerRow.append("Secondary Phone Warning")
 headerRow.append("Secondary Phone to Name")
@@ -52,8 +54,8 @@ headerRow.append("Secondary Phone Country Code")
 headerRow.append("Secondary Phone Line Type")
 headerRow.append("Secondary Phone Carrier")
 headerRow.append("Secondary Phone Is Prepaid")
-headerRow.append("Secondary Phone Is Connected")
 headerRow.append("Secondary Phone Is Commercial")
+headerRow.append("Secondary Address Error")
 headerRow.append("Secondary Address IsValid")
 headerRow.append("Secondary Address Warning")
 headerRow.append("Secondary Address Diagnostic")
@@ -83,6 +85,7 @@ headerRow.append("IP Location Country")
 headerRow.append("IP Location Continent")
 headerRow.append("IP Is Proxy")
 headerRow.append("IP Connection Type")
+headerRow.append("Stolen Identity")
 
 rowNum = 0
 for row in csvReader:
@@ -102,6 +105,7 @@ for row in csvReader:
 			continue
 		resultRow = []
 		resultRow.append('')
+		resultRow.append(wppbatchlib.nvl(wppbatchlib.nvl(data.get('primary_phone_checks',{}),{}).get('error',''),''))
 		resultRow.append(wppbatchlib.nvl(wppbatchlib.nvl(data.get('primary_phone_checks',{}),{}).get('is_valid',''),''))
 		resultRow.append(wppbatchlib.nvl(wppbatchlib.nvl(data.get('primary_phone_checks',{}),{}).get('warnings',''),''))
 		resultRow.append(wppbatchlib.nvl(wppbatchlib.nvl(data.get('primary_phone_checks',{}),{}).get('phone_to_name',''),''))
@@ -111,9 +115,9 @@ for row in csvReader:
 		resultRow.append(wppbatchlib.nvl(wppbatchlib.nvl(data.get('primary_phone_checks',{}),{}).get('line_type',''),''))
 		resultRow.append(wppbatchlib.nvl(wppbatchlib.nvl(data.get('primary_phone_checks',{}),{}).get('carrier',''),''))
 		resultRow.append(wppbatchlib.nvl(wppbatchlib.nvl(data.get('primary_phone_checks',{}),{}).get('is_prepaid',''),''))
-		resultRow.append(wppbatchlib.nvl(wppbatchlib.nvl(data.get('primary_phone_checks',{}),{}).get('is_connected',''),''))
 		resultRow.append(wppbatchlib.nvl(wppbatchlib.nvl(data.get('primary_phone_checks',{}),{}).get('is_commercial',''),''))
 		
+		resultRow.append(wppbatchlib.nvl(wppbatchlib.nvl(data.get('primary_address_checks',{}),{}).get('error',''),''))
 		resultRow.append(wppbatchlib.nvl(wppbatchlib.nvl(data.get('primary_address_checks',{}),{}).get('is_valid',''),''))
 		resultRow.append(wppbatchlib.nvl(wppbatchlib.nvl(data.get('primary_address_checks',{}),{}).get('warnings',['']),[''])[0])
 		resultRow.append(wppbatchlib.nvl(wppbatchlib.nvl(data.get('primary_address_checks',{}),{}).get('diagnostics',['']),[''])[0])
@@ -123,6 +127,7 @@ for row in csvReader:
 		resultRow.append(wppbatchlib.nvl(wppbatchlib.nvl(data.get('primary_address_checks',{}),{}).get('is_active',''),''))
 		resultRow.append(wppbatchlib.nvl(wppbatchlib.nvl(data.get('primary_address_checks',{}),{}).get('is_commercial',''),''))
 		
+		resultRow.append(wppbatchlib.nvl(wppbatchlib.nvl(data.get('secondary_phone_checks',{}),{}).get('error',''),''))
 		resultRow.append(wppbatchlib.nvl(wppbatchlib.nvl(data.get('secondary_phone_checks',{}),{}).get('is_valid',''),''))
 		resultRow.append(wppbatchlib.nvl(wppbatchlib.nvl(data.get('secondary_phone_checks',{}),{}).get('warnings',''),''))
 		resultRow.append(wppbatchlib.nvl(wppbatchlib.nvl(data.get('secondary_phone_checks',{}),{}).get('phone_to_name',''),''))
@@ -132,9 +137,9 @@ for row in csvReader:
 		resultRow.append(wppbatchlib.nvl(wppbatchlib.nvl(data.get('secondary_phone_checks',{}),{}).get('line_type',''),''))
 		resultRow.append(wppbatchlib.nvl(wppbatchlib.nvl(data.get('secondary_phone_checks',{}),{}).get('carrier',''),''))
 		resultRow.append(wppbatchlib.nvl(wppbatchlib.nvl(data.get('secondary_phone_checks',{}),{}).get('is_prepaid',''),''))
-		resultRow.append(wppbatchlib.nvl(wppbatchlib.nvl(data.get('secondary_phone_checks',{}),{}).get('is_connected',''),''))
 		resultRow.append(wppbatchlib.nvl(wppbatchlib.nvl(data.get('secondary_phone_checks',{}),{}).get('is_commercial',''),''))
 		
+		resultRow.append(wppbatchlib.nvl(wppbatchlib.nvl(data.get('secondary_address_checks',{}),{}).get('error',''),''))
 		resultRow.append(wppbatchlib.nvl(wppbatchlib.nvl(data.get('secondary_address_checks',{}),{}).get('is_valid',''),''))
 		resultRow.append(wppbatchlib.nvl(wppbatchlib.nvl(data.get('secondary_address_checks',{}),{}).get('warnings',['']),[''])[0])
 		resultRow.append(wppbatchlib.nvl(wppbatchlib.nvl(data.get('secondary_address_checks',{}),{}).get('diagnostics',['']),[''])[0])
@@ -157,6 +162,7 @@ for row in csvReader:
 		resultRow.append(wppbatchlib.nvl(wppbatchlib.nvl(data.get('email_address_checks',{}),{}).get('email_domain_creation_date',''),''))
 		resultRow.append(wppbatchlib.nvl(wppbatchlib.nvl(data.get('email_address_checks',{}),{}).get('email_domain_creation_days',''),''))
 		
+		resultRow.append(wppbatchlib.nvl(wppbatchlib.nvl(data.get('ip_address_checks',{}),{}).get('error',['']),[''])[0])
 		resultRow.append(wppbatchlib.nvl(wppbatchlib.nvl(data.get('ip_address_checks',{}),{}).get('warnings',['']),[''])[0])
 		resultRow.append(wppbatchlib.nvl(wppbatchlib.nvl(data.get('ip_address_checks',{}),{}).get('distance_from_address',''),''))
 		resultRow.append(wppbatchlib.nvl(wppbatchlib.nvl(data.get('ip_address_checks',{}),{}).get('distance_from_phone',''),''))
@@ -166,6 +172,7 @@ for row in csvReader:
 		resultRow.append(wppbatchlib.nvl(wppbatchlib.nvl(data.get('ip_address_checks',{}),{}).get('geolocation',{}),{}).get('continent_code',''))
 		resultRow.append(wppbatchlib.nvl(wppbatchlib.nvl(data.get('ip_address_checks',{}),{}).get('is_proxy',''),''))
 		resultRow.append(wppbatchlib.nvl(wppbatchlib.nvl(data.get('ip_address_checks',{}),{}).get('connection_type',''),''))
+		resultRow.append(wppbatchlib.nvl(wppbatchlib.nvl(data.get('stoeln_identity_check',{}),{}),''))
 		decodedRow = []
 		for a in resultRow:
 			if a is None:
