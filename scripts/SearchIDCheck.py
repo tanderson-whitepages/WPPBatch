@@ -135,6 +135,8 @@ try:
 		inputFields.append('secondary.phone')
 		inputFields.append('email_address')
 		inputFields.append('ip_address')
+		inputFields.append('transaction_time')
+		inputFields.append('original_outcome')
 		inputMap = []
 		
 		print 'We\'re now going to iterate over all of the possible input parameters. '
