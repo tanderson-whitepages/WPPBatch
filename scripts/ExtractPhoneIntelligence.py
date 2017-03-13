@@ -31,8 +31,8 @@ for row in csvReader:
 		headers = ['Error']
 		headers.append('Line Type')
 		headers.append('Carrier')
-		headers.append('Is Valid')
-		headers.append('Is Connected')
+		headers.append('isValid')
+		headers.append('isPrepaid')
 		csvWriter.writerow(row[:-2]+headers)
 	else:
 		data = {}
@@ -44,18 +44,15 @@ for row in csvReader:
 			continue
 		
 		error = wppbatchlib.nvl(data.get('error',{}),{}).get('message','')
-		results = wppbatchlib.nvl(data.get('results',[{}]),[{}])[0]
-		lineType = results.get('line_type','')
-		carrier = results.get('carrier','')
-		isValid = results.get('is_valid','')
-		isConnected = results.get('is_connected','')
-		isPrepaid = results.get('is_prepaid','')
+		lineType = data.get('line_type','')
+		carrier = data.get('carrier','')
+		isValid = data.get('is_valid','')
+		isPrepaid = data.get('is_prepaid','')
 			
 		resultRow = [error]
 		resultRow.append(lineType)
 		resultRow.append(carrier)
 		resultRow.append(isValid)
-		resultRow.append(isConnected)
 		resultRow.append(isPrepaid)
 		decodedRow = []
 		for a in resultRow:
