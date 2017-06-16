@@ -29,13 +29,11 @@ for row in csvReader:
 	
 	if rowNum == 1:
 		headers = ['Error']
-		headers.append('Result Number')
 		headers.append('First Name')
 		headers.append('Middle Name')
 		headers.append('Last Name')
 		headers.append('Age Range')
 		headers.append('Gender')
-		headers.append('Location Is Historical')
 		headers.append('Location Type')
 		headers.append('Location Valid From')
 		headers.append('Location Valid To')
@@ -46,7 +44,6 @@ for row in csvReader:
 		headers.append('Zip+4')
 		headers.append('Country')
 		headers.append('Location Delivery Point')
-		headers.append('Location Usage Type')
 		headers.append('Location Receiving Mail')
 		headers.append('Location LatLon Accuracy')
 		headers.append('Location Latitude')
@@ -63,7 +60,7 @@ for row in csvReader:
 			continue
 		
 		error = wppbatchlib.nvl(data.get('error',{}),{}).get('message','')
-		results = wppbatchlib.nvl(data.get('results',[{}]),[{}])
+		results = wppbatchlib.nvl(data.get('person',[{}]),[{}])
 					
 							
 		if error == '' and len(results[0].keys()) == 0:
@@ -71,10 +68,11 @@ for row in csvReader:
 		
 		resultNum = 0
 		for primaryPerson in results:
-			primaryPersonKey = primaryPerson.get('id',{}).get('key')
+			primaryPersonKey = primaryPerson.get('person',{}).get('id')
 			resultNum += 1
 			
-			locs = primaryPerson.get('locations',[{}])
+			
+			locs = primaryPerson.get('current_addresses',[{}])
 			bestIndex = 0
 			
 			for locIndex in range (0,len(locs)):
@@ -87,45 +85,35 @@ for row in csvReader:
 				locs = [locs[bestIndex]]
 			else:
 				csvWriter.writerow(row[:-2]+['No location found',resultNum,'','',''])
-				
+			
+			#fetches current address for the searched individual
 			for location in locs:
-					
-				isHistorical = location.get('is_historical','')	
 				
-				locType = location.get('type','')
-				start = wppbatchlib.nvl(wppbatchlib.nvl(location.get('valid_for',{}),{}).get('start',{}),{})
-				end = wppbatchlib.nvl(wppbatchlib.nvl(location.get('valid_for',{}),{}).get('stop',{}),{})
-				validFrom = str(start.get('year',''))+'-'+str(start.get('month',''))+'-'+str(start.get('day',''))
-				validTo = str(end.get('year',''))+'-'+str(end.get('month',''))+'-'+str(end.get('day',''))	
+				locType = location.get('location_type','')
+				validFrom = location.get('link_to_person_start_date','')
+				validTo = location.get('link_to_person_end_date','')
+
 				
-				street = location.get('standard_address_line1','')
+				street = location.get('street_line_1','')
 				city = location.get('city','')
 				state = location.get('state_code','')
 				postalCode = location.get('postal_code','')
 				zip4 = location.get('zip4','')
 				country = location.get('country_code','')
 				deliveryPoint = location.get('delivery_point','')
-				usageType = location.get('usage','')
-				rcvMail = location.get('is_receiving_mail','')
+				isActive = location.get('is_active','')
 				
 				latLonAccuracy = wppbatchlib.nvl(location.get('lat_long',{}),{}).get('accuracy','')
 				latitude = wppbatchlib.nvl(location.get('lat_long',{}),{}).get('latitude','')
 				longitude = wppbatchlib.nvl(location.get('lat_long',{}),{}).get('longitude','')
 				
-				#fetch people, but only get the primary person
-				for person in location.get('legal_entities_at',[{}]):
-					personKey = person.get('id',{}).get('key')
-					if personKey != primaryPersonKey:
-						continue
-						
-					personName = wppbatchlib.nvl(person.get('names',[{}]),[{}])[0]
-					firstName = personName.get('first_name','')
-					middleName = personName.get('middle_name','')
-					lastName = personName.get('last_name','')
-					ageRange = str(wppbatchlib.nvl(person.get('age_range',{}),{}).get('start','?'))
-					ageRange +='-'+str(wppbatchlib.nvl(person.get('age_range',{}),{}).get('end','?'))
-					if ageRange == '?-?':
-						ageRange = ''
+				#person data
+				for person in results:
+
+					firstName = person.get('firstname','')
+					middleName = person.get('middlename','')
+					lastName = person.get('lastname','')
+					ageRange = person.get('age_range','')
 					gender = person.get('gender','')
 					
 					phoneNumber = ''
@@ -136,13 +124,11 @@ for row in csvReader:
 							break
 				
 					resultRow = [error]
-					resultRow.append(resultNum)
 					resultRow.append(firstName)
 					resultRow.append(middleName)
 					resultRow.append(lastName)
 					resultRow.append(ageRange)
 					resultRow.append(gender)
-					resultRow.append(isHistorical)
 					resultRow.append(locType)
 					resultRow.append(validFrom)
 					resultRow.append(validTo)
@@ -153,8 +139,7 @@ for row in csvReader:
 					resultRow.append(zip4)
 					resultRow.append(country)
 					resultRow.append(deliveryPoint)
-					resultRow.append(usageType)
-					resultRow.append(rcvMail)
+					resultRow.append(isActive)
 					resultRow.append(latLonAccuracy)
 					resultRow.append(latitude)
 					resultRow.append(longitude)
