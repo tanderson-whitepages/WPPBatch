@@ -115,7 +115,7 @@ try:
 		print ''
 		
 		#now iterate over input parameters for phone searches and map which column from the input file should be submitted.
-		inputFields = ['street_line_1','city','state_code','postal_code']
+		inputFields = ['street_line_1','street_line_2','city','state_code','postal_code','country_code']
 		inputMap = []
 		
 		print 'We\'re now going to iterate over all of the possible input parameters. '
@@ -175,7 +175,7 @@ try:
 		if row != 'thisistheend':
 			numInputs += 1
 			#build URL
-			apiURL = 'http://'+apiHost+'/2.1/location.json?'
+			apiURL = 'http://'+apiHost+'/3.0/location.json?'
 			for i in inputMap:
 				if len(row[int(i[1])]) > 0:
 					apiURL += str(i[0]).lower()+'='+str(urllib.quote(row[int(i[1])]))+'&'
