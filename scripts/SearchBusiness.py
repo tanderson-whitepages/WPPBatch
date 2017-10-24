@@ -112,7 +112,7 @@ try:
 		print ''
 			
 		#now iterate over input parameters for phone searches and map which column from the input file should be submitted.
-		inputFields = ['name','street_line_1','city','state_code','postal_code']
+		inputFields = ['name','address.street_line_1','address.city','address.state_code','address.postal_code']
 		inputMap = []
 		
 		print 'We\'re now going to iterate over all of the possible input parameters. '
@@ -154,7 +154,7 @@ try:
 			print ''
 	
 except:
-	print 'An unexpected error occurred building inputs: '+str(sys.exc_info()[0])
+	print 'An unexpected error occurred building inputs: '+str(sys.exc_info()) 		# Removed [0] to return all outputs of exc_info tuple.
 	var = raw_input("Hit enter to quit")
 
 try:	
@@ -171,7 +171,7 @@ try:
 		if row != 'thisistheend':
 			numInputs += 1
 			#build URL
-			apiURL = 'http://'+apiHost+'/2.1/business.json?'
+			apiURL = 'http://'+apiHost+'/3.0/business.json?'
 			for i in inputMap:
 				if len(row[int(i[1])]) > 0:
 					apiURL += str(i[0]).lower()+'='+str(urllib.quote(row[int(i[1])]))+'&'
@@ -200,7 +200,8 @@ try:
 	print 'Execution has begun...'
 		
 	for i in range(0,numThreads):
-		threads[i].start()		
+		threads[i].start()
+		#print row 								# Adding print for each line to see where the fault is
 		
 	for t in threads:
 		t.join()
@@ -209,4 +210,5 @@ try:
 	outFile.flush()
 	outFile.close()
 except:
+	print row
 	print 'An unexpected error occurred running inputs: '+str(sys.exc_info()[0])
