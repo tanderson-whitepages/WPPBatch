@@ -17,8 +17,8 @@ iFilePath = sys.argv[1]
 resultsFilePath = sys.argv[1][:-15]+'_results.csv'
 print 'Extracting Identity Check results from '+str(iFilePath)
 try:
-	csvReader = csv.reader(open(iFilePath,'rb'), delimiter=',', quotechar ='')
-	csvWriter = csv.writer(open(resultsFilePath,'wb'),delimiter=',',quotechar='')
+	csvReader = csv.reader(open(iFilePath,'rb'), delimiter=',', quotechar ='"')
+	csvWriter = csv.writer(open(resultsFilePath,'wb'),delimiter=',',quotechar='"')
 except:
 	print 'Error opening files'
 	
@@ -106,7 +106,7 @@ for row in csvReader:
 	else:
 		data = {}
 		try:
-			response = row[-1].decode('windows-1252')
+			response = row[-1].decode('iso-8859-2')
 			data = json.loads(response)
 		except:
 			print 'Error reading JSON on row '+str(rowNum)
