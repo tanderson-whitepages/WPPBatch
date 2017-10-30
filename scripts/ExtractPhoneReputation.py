@@ -26,7 +26,7 @@ for row in csvReader:
 	#followed by the JSON response.
 	rowNum += 1
 	if rowNum == 1:
-		csvWriter.writerow(row[:-2]+['Error','Reputation Level','Reputation Details','Report Count','Volume Score','Severity','Type','Code','Message','Field'])
+		csvWriter.writerow(row[:-2]+['Error','Reputation Level','Volume Score','Report Count','Reputation Score','Reputation Type','Reputation Category'])
 	else:
 		data = {}
 		try:
@@ -37,31 +37,15 @@ for row in csvReader:
 			continue
 		
 		error = wppbatchlib.nvl(data.get('error',{}),{}).get('message','')
-		results = wppbatchlib.nvl(data.get('results',[{}]),[{}])[0]
-		rep = wppbatchlib.nvl(results.get('reputation',{}),{})
-		mes = wppbatchlib.nvl(data.get('messages',[{}]),[{}])[0]
-		ancillary = wppbatchlib.nvl(mes.get('ancillary_data',{}),{})
-		repLevel = rep.get('level','')
-		repVolume = rep.get('volume_score','')
-		repReport = rep.get('report_count','')
-		repDetails = ''
-		numDetails = 0
-		for x in rep.get('details',[]):
-			numDetails += 1
-			if numDetails > 1:
-				repDetails += '|'
-			repDetails += x.get('type','')
-			repDetails += ';'
-			repDetails += x.get('category','')
-			repDetails += ';'
-			repDetails += str(x.get('score',''))
-		mesSev = mes.get('severity','')
-		mesType = mes.get('type','')
-		mesCode = mes.get('code','')
-		mesMes = mes.get('message','')
-		mesField = ancillary.get('field','')
+		repLevel = data.get('reputation_level','')
+		repVolume = data.get('volume_score','')
+		repReport = data.get('report_count','')
+		score = wppbatchlib.nvl(data.get('reputation_details',{}),{}).get('score','')
+		type = wppbatchlib.nvl(data.get('reputation_details',{}),{}).get('type','')
+		category = wppbatchlib.nvl(data.get('reputation_details',{}),{}).get('category','')
 		
-		resultRow = [error,repLevel,repDetails,repReport,repVolume,mesSev,mesType,mesCode,mesMes,mesField]
+		
+		resultRow = [error,repLevel,repVolume,repReport,score,type,category]
 		decodedRow = []
 		for a in resultRow:
 			if a is None:
