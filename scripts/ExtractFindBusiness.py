@@ -56,9 +56,9 @@ for row in csvReader:
 			continue
 		
 		error = wppbatchlib.nvl(data.get('error',{}),{}).get('message','')
-		results = wppbatchlib.nvl(data.get('results',[{}]),[{}])
+		results = wppbatchlib.nvl(data.get('business',[{}]),[{}])
 					
-		if len(results[0].keys()) == 0:
+		if len(results) == 0:
 			error = 'No results found'
 		
 		resultNum = 0
@@ -74,7 +74,7 @@ for row in csvReader:
 					phoneNumber = p.get('phone_number','')
 					break
 			
-			locs = result.get('locations',[{}])	
+			locs = result.get('current_addresses',[{}])	
 			if locs is None:
 				locs = []
 			for location in locs:
@@ -86,7 +86,7 @@ for row in csvReader:
 				validFrom = str(start.get('year',''))+'-'+str(start.get('month',''))+'-'+str(start.get('day',''))
 				validTo = str(end.get('year',''))+'-'+str(end.get('month',''))+'-'+str(end.get('day',''))	
 				
-				street = location.get('standard_address_line1','')
+				street = location.get('street_line_1','')
 				city = location.get('city','')
 				state = location.get('state_code','')
 				postalCode = location.get('postal_code','')
