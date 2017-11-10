@@ -26,7 +26,7 @@ for row in csvReader:
 	#followed by the JSON response.
 	rowNum += 1
 	if rowNum == 1:
-		csvWriter.writerow(row[:-2]+['Error','Reputation Level','Volume Score','Report Count','Reputation Score','Reputation Type','Reputation Category'])
+		csvWriter.writerow(row[:-2]+['Error','Warning','Reputation Level','Volume Score','Report Count','Reputation Score','Reputation Type','Reputation Category'])
 	else:
 		data = {}
 		try:
@@ -37,6 +37,7 @@ for row in csvReader:
 			continue
 		
 		error = wppbatchlib.nvl(data.get('error',{}),{}).get('message','')
+		warning = data.get('warnings','')
 		repLevel = data.get('reputation_level','')
 		repVolume = data.get('volume_score','')
 		repReport = data.get('report_count','')
@@ -45,7 +46,7 @@ for row in csvReader:
 		category = wppbatchlib.nvl(data.get('reputation_details',{}),{}).get('category','')
 		
 		
-		resultRow = [error,repLevel,repVolume,repReport,score,type,category]
+		resultRow = [error,warning,repLevel,repVolume,repReport,score,type,category]
 		decodedRow = []
 		for a in resultRow:
 			if a is None:
