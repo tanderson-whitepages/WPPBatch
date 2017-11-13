@@ -154,7 +154,7 @@ try:
 		print 'Using historical = '+str(useHistoric)
 		print ''
 		#now iterate over input parameters for phone searches and map which column from the input file should be submitted.
-		inputFields = ['name','first_name','last_name','address.street_line_1','address.city','address.state_code','address.postal_code']
+		inputFields = ['name','firstname','lastname','address.street_line_1','address.city','address.state_code','address.postal_code']
 		inputMap = []
 		
 		print 'We\'re now going to iterate over all of the possible input parameters. '
