@@ -93,7 +93,7 @@ headerRow.append("IP Location Country")
 headerRow.append("IP Is Proxy")
 headerRow.append("IP Is Valid")
 headerRow.append("IP Connection Type")
-headerRow.append("Stolen Identity")
+# headerRow.append("Stolen Identity")
 headerRow.append("Confidence Score")
 
 rowNum = 0
@@ -189,7 +189,7 @@ for row in csvReader:
 		resultRow.append(wppbatchlib.nvl(wppbatchlib.nvl(data.get('ip_address_checks',{}),{}).get('is_proxy',''),''))
 		resultRow.append(wppbatchlib.nvl(wppbatchlib.nvl(data.get('ip_address_checks',{}),{}).get('is_valid',''),''))
 		resultRow.append(wppbatchlib.nvl(wppbatchlib.nvl(data.get('ip_address_checks',{}),{}).get('connection_type',''),''))
-		resultRow.append(wppbatchlib.nvl(wppbatchlib.nvl(data.get('stolen_identity_check',{}),{}),''))
+		# resultRow.append(wppbatchlib.nvl(wppbatchlib.nvl(data.get('stolen_identity_check',{}),{}),''))
 		resultRow.append(wppbatchlib.nvl(wppbatchlib.nvl(data.get('identity_check_score',{}),{}),''))
 		decodedRow = []
 		for a in resultRow:
