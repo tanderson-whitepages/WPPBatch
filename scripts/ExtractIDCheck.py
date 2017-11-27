@@ -94,7 +94,7 @@ headerRow.append("IP Is Proxy")
 headerRow.append("IP Is Valid")
 headerRow.append("IP Connection Type")
 headerRow.append("Stolen Identity")
-headerRow.append("Identity Score")
+headerRow.append("Confidence Score")
 
 rowNum = 0
 for row in csvReader:
