@@ -193,7 +193,7 @@ for row in csvReader:
 		resultRow.append(wppbatchlib.nvl(wppbatchlib.nvl(data.get('identity_check_score',{}),{}),''))
 		decodedRow = []
 		for a in resultRow:
-			if a is None:
+			if a is None or a == {}:
 				a = ''
 			try:
 				decodedRow.append(a.encode('utf-8'))
