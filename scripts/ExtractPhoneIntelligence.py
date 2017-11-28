@@ -31,7 +31,7 @@ for row in csvReader:
 		headers = ['Error']
 		headers.append('Line Type')
 		headers.append('Carrier')
-		headers.append('isValid')
+		headers.append('Is Valid')
 		headers.append('isPrepaid')
 		csvWriter.writerow(row[:-2]+headers)
 	else:
