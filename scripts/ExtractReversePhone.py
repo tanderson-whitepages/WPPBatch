@@ -49,6 +49,7 @@ for row in csvReader:
 		headers.append('Location LatLon Accuracy')
 		headers.append('Location Latitude')
 		headers.append('Location Longitude')
+		headers.append('Alternate Phone')
 		csvWriter.writerow(row[:-2]+headers)
 	else:
 		data = {}
@@ -72,6 +73,8 @@ for row in csvReader:
 		belongsTo = wppbatchlib.nvl(data.get('belongs_to',[{}]),[{}])
 		currAddresses = wppbatchlib.nvl(data.get('current_addresses',[{}]),[{}])
 		associatedPeople = wppbatchlib.nvl(data.get('associated_people',[]),[])
+
+		alternatePhone = ';'.join(map(str, wppbatchlib.nvl(data.get('alternate_phones',[]),[]) ))
 		
 		for owner in belongsTo:
 	
@@ -117,6 +120,7 @@ for row in csvReader:
 				resultRow.append(latLonAccuracy)
 				resultRow.append(latitude)
 				resultRow.append(longitude)
+				resultRow.append(alternatePhone)
 				
 				decodedRow = []
 				for a in resultRow:
