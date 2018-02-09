@@ -38,6 +38,7 @@ for row in csvReader:
 		headers.append('Name')
 		headers.append('Age Range')
 		headers.append('Gender')
+		headers.append('Location Type')
 		headers.append('Street')
 		headers.append('City')
 		headers.append('State')
@@ -83,7 +84,8 @@ for row in csvReader:
 			gender = owner.get('gender','')
 			
 			for location in currAddresses:
-								
+				
+				locationType = location.get('location_type','')				
 				street = location.get('street_line_1','')
 				city = location.get('city','')
 				state = location.get('state_code','')
@@ -109,6 +111,7 @@ for row in csvReader:
 				resultRow.append(name)
 				resultRow.append(ageRange)
 				resultRow.append(gender)
+				resultRow.append(locationType)
 				resultRow.append(street)
 				resultRow.append(city)
 				resultRow.append(state)
@@ -146,7 +149,8 @@ for row in csvReader:
 			gender = person.get('gender','')
 			
 			for location in currAddresses:
-								
+				
+				locationType = location.get('location_type','')				
 				street = location.get('street_line_1','')
 				city = location.get('city','')
 				state = location.get('state_code','')
@@ -172,6 +176,7 @@ for row in csvReader:
 				resultRow.append(name)
 				resultRow.append(ageRange)
 				resultRow.append(gender)
+				resultRow.append(locationType)
 				resultRow.append(street)
 				resultRow.append(city)
 				resultRow.append(state)
