@@ -66,7 +66,7 @@ try:
 		try:
 			f = open(os.path.dirname(os.path.realpath(sys.argv[0]))+'/../wppbatch.ini','r')
 			content = f.read()
-			mApiKey = re.search('.*api.?key\:\\s?([a-zA-Z0-9]+)',content)
+			mApiKey = re.search('.*api.?key\:\\s?([a-zA-Z0-9_\-]+)',content)
 			if mApiKey:
 				apiKey = mApiKey.group(1)
 			mThreads = re.search('.*threads\:\\s?(\\d+)',content)
@@ -123,6 +123,7 @@ try:
 		inputFields.append('primary.address.state_code')
 		inputFields.append('primary.address.postal_code')
 		inputFields.append('primary.phone')
+		inputFields.append('primary.phone.country_hint')
 		inputFields.append('secondary.address.country_code')
 		inputFields.append('secondary.name')
 		inputFields.append('secondary.firstname')
@@ -133,8 +134,10 @@ try:
 		inputFields.append('secondary.address.state_code')
 		inputFields.append('secondary.address.postal_code')
 		inputFields.append('secondary.phone')
+		inputFields.append('secondary.phone.country_hint')
 		inputFields.append('email_address')
 		inputFields.append('ip_address')
+		inputFields.append('transaction_id')
 		inputFields.append('transaction_time')
 		inputFields.append('original_outcome')
 		inputMap = []
@@ -205,7 +208,7 @@ try:
 		if row != 'thisistheend':
 			numInputs += 1
 			#build URL
-			apiURL = 'http://'+apiHost+'/3.2/identity_check.json?'
+			apiURL = 'https://'+apiHost+'/3.2/identity_check.json?'
 			for i in inputMap:
 				if len(row) > int(i[1]):
 					if len(row[int(i[1])]) > 0:

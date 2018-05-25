@@ -171,7 +171,7 @@ try:
 		if row != 'thisistheend':
 			numInputs += 1
 			#build URL
-			apiURL = 'http://'+apiHost+'/3.0/business.json?'
+			apiURL = 'https://'+apiHost+'/3.0/business.json?'
 			for i in inputMap:
 				if len(row[int(i[1])]) > 0:
 					apiURL += str(i[0]).lower()+'='+str(urllib.quote(row[int(i[1])]))+'&'

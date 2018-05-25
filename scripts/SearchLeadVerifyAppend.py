@@ -192,7 +192,7 @@ try:
 		if row != 'thisistheend':
 			numInputs += 1
 			#build URL
-			apiURL = 'http://'+apiHost+'/3.2/lead_verify_append?'
+			apiURL = 'https://'+apiHost+'/3.2/lead_verify_append?'
 			for i in inputMap:
 				if len(row[int(i[1])]) > 0:
 					apiURL += str(i[0]).lower()+'='+str(urllib.quote(str(row[int(i[1])]).strip()))+'&'
